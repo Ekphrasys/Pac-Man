@@ -5,7 +5,7 @@ function generateMaze(size) {
   // Create a grid filled with walls (1)
   let grid = Array.from({ length: size }, () => Array(size).fill(1));
 
-  // Function to create random paths with loops
+  // Function to create random paths with loops and more open spaces
   function carvePassages(x, y) {
     let directions = [
       [0, -2], [0, 2], [-2, 0], [2, 0] // Up, Down, Left, Right
@@ -27,27 +27,41 @@ function generateMaze(size) {
   grid[1][1] = 0;
   carvePassages(1, 1);
 
-  // Increase the number of random openings for a more open layout
-  let extraOpenings = Math.floor(size * 1.5); // More openings
+  // Reduce density of walls to allow for more open spaces
+  const extraOpenings = Math.floor(size * 3); // Allow more openings
   for (let i = 0; i < extraOpenings; i++) {
     let rx = Math.floor(Math.random() * (size - 2)) + 1;
     let ry = Math.floor(Math.random() * (size - 2)) + 1;
-    if (grid[ry][rx] === 1 && ((grid[ry - 1]?.[rx] === 0) || (grid[ry + 1]?.[rx] === 0) || (grid[ry]?.[rx - 1] === 0) || (grid[ry]?.[rx + 1] === 0))) {
+    if (grid[ry][rx] === 1) {
+      // Randomly make some walls into paths, but keep areas more open
       grid[ry][rx] = 0;
     }
   }
 
-  // Ensure the T-shaped open space in the middle
+  // Increase the number of loops by adding paths that connect in a variety of ways
+  for (let i = 0; i < size * 2; i++) {
+    let rx = Math.floor(Math.random() * (size - 2)) + 1;
+    let ry = Math.floor(Math.random() * (size - 2)) + 1;
+    if (grid[ry][rx] === 1) {
+      // Check if there's a nearby open space to form a loop
+      if (grid[ry - 1]?.[rx] === 0 || grid[ry + 1]?.[rx] === 0 || grid[ry]?.[rx - 1] === 0 || grid[ry]?.[rx + 1] === 0) {
+        grid[ry][rx] = 0; // Create loop by carving open paths
+      }
+    }
+  }
+
+  // Ensure a T-shape (with exactly 4 empty spaces) at the center
   let mid = Math.floor(size / 2);
   let tShape = [
     [mid, mid], [mid - 1, mid], [mid + 1, mid], [mid, mid - 1]
   ];
-  
-  for (let [y, x] of tShape) {
-    grid[y][x] = 0; // Ensure the T-shape is empty space
-  }
 
-  // Place dots only on valid paths, but avoid T-shaped area
+  // Remove any walls in the T-shape area
+  tShape.forEach(([ty, tx]) => {
+    grid[ty][tx] = 0;
+  });
+
+  // Place dots on open paths (avoid T-shape)
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       if (grid[y][x] === 0 && !tShape.some(([ty, tx]) => ty === y && tx === x)) {
@@ -58,6 +72,8 @@ function generateMaze(size) {
 
   return grid;
 }
+
+
 
 let grid = generateMaze(20)
 

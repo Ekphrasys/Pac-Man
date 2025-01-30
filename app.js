@@ -16,39 +16,44 @@ function generateMaze(size) {
       let nx = x + dx;
       let ny = y + dy;
       if (nx > 0 && nx < size - 1 && ny > 0 && ny < size - 1 && grid[ny][nx] === 1) {
-        grid[y + dy / 2][x + dx / 2] = 2; // Remove wall between cells
-        grid[ny][nx] = 2; // Create path
+        grid[y + dy / 2][x + dx / 2] = 0; // Remove wall between cells
+        grid[ny][nx] = 0; // Create path
         carvePassages(nx, ny);
       }
     }
   }
 
   // Start carving from (1,1)
-  grid[1][1] = 2;
+  grid[1][1] = 0;
   carvePassages(1, 1);
 
-  // Add extra random openings to create loops
-  for (let i = 0; i < size * 2; i++) {
+  // Increase the number of random openings for a more open layout
+  let extraOpenings = Math.floor(size * 1.5); // More openings
+  for (let i = 0; i < extraOpenings; i++) {
     let rx = Math.floor(Math.random() * (size - 2)) + 1;
     let ry = Math.floor(Math.random() * (size - 2)) + 1;
-    if (grid[ry][rx] === 1) {
-      grid[ry][rx] = 2;
+    if (grid[ry][rx] === 1 && ((grid[ry - 1]?.[rx] === 0) || (grid[ry + 1]?.[rx] === 0) || (grid[ry]?.[rx - 1] === 0) || (grid[ry]?.[rx + 1] === 0))) {
+      grid[ry][rx] = 0;
     }
   }
 
   // Ensure the T-shaped open space in the middle
   let mid = Math.floor(size / 2);
-  grid[mid][mid] = 0;
-  grid[mid - 1][mid] = 0;
-  grid[mid + 1][mid] = 0;
-  grid[mid][mid - 1] = 0;
+  let tShape = [
+    [mid, mid], [mid - 1, mid], [mid + 1, mid], [mid, mid - 1]
+  ];
+  
+  for (let [y, x] of tShape) {
+    grid[y][x] = 0; // Ensure the T-shape is empty space
+  }
 
-  // Ensure outer walls are exactly 1 wide
-  for (let i = 0; i < size; i++) {
-    grid[0][i] = 1;
-    grid[size - 1][i] = 1;
-    grid[i][0] = 1;
-    grid[i][size - 1] = 1;
+  // Place dots only on valid paths, but avoid T-shaped area
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if (grid[y][x] === 0 && !tShape.some(([ty, tx]) => ty === y && tx === x)) {
+        grid[y][x] = 2; // Place dot
+      }
+    }
   }
 
   return grid;

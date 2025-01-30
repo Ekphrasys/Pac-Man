@@ -59,8 +59,7 @@ function generateMaze(size) {
   return grid;
 }
 
-let gridSize = 20
-let grid = generateMaze(gridSize)
+let grid = generateMaze(20)
 
 // 0 = path
 // 1 = wall

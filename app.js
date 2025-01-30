@@ -1,29 +1,61 @@
 const gridElement = document.getElementById("grid");
 
 // game grid configuration
-const gridSize = 20;
-const grid = [
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  [1, 0, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1],
-  [1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1],
-  [1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1],
-  [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-  [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-  [1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1],
-  [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-  [1, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1],
-  [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-  [1, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1],
-  [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1],
-  [1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1],
-  [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-  [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-  [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-];
+function generateMaze(size) {
+  // Create a grid filled with walls (1)
+  let grid = Array.from({ length: size }, () => Array(size).fill(1));
+
+  // Function to create random paths with loops
+  function carvePassages(x, y) {
+    let directions = [
+      [0, -2], [0, 2], [-2, 0], [2, 0] // Up, Down, Left, Right
+    ];
+    directions = directions.sort(() => Math.random() - 0.5); // Shuffle directions
+
+    for (let [dx, dy] of directions) {
+      let nx = x + dx;
+      let ny = y + dy;
+      if (nx > 0 && nx < size - 1 && ny > 0 && ny < size - 1 && grid[ny][nx] === 1) {
+        grid[y + dy / 2][x + dx / 2] = 2; // Remove wall between cells
+        grid[ny][nx] = 2; // Create path
+        carvePassages(nx, ny);
+      }
+    }
+  }
+
+  // Start carving from (1,1)
+  grid[1][1] = 2;
+  carvePassages(1, 1);
+
+  // Add extra random openings to create loops
+  for (let i = 0; i < size * 2; i++) {
+    let rx = Math.floor(Math.random() * (size - 2)) + 1;
+    let ry = Math.floor(Math.random() * (size - 2)) + 1;
+    if (grid[ry][rx] === 1) {
+      grid[ry][rx] = 2;
+    }
+  }
+
+  // Ensure the T-shaped open space in the middle
+  let mid = Math.floor(size / 2);
+  grid[mid][mid] = 0;
+  grid[mid - 1][mid] = 0;
+  grid[mid + 1][mid] = 0;
+  grid[mid][mid - 1] = 0;
+
+  // Ensure outer walls are exactly 1 wide
+  for (let i = 0; i < size; i++) {
+    grid[0][i] = 1;
+    grid[size - 1][i] = 1;
+    grid[i][0] = 1;
+    grid[i][size - 1] = 1;
+  }
+
+  return grid;
+}
+
+let gridSize = 20
+let grid = generateMaze(gridSize)
 
 // 0 = path
 // 1 = wall
@@ -89,26 +121,26 @@ function movePacman(dx, dy) {
 }
 
 // (Fonction de mouvements épileptiques qu'il faut changer vite)
-// function moveEnemies () {
-//   enemies.forEach(enemy => {
-//     // Simple random movement logic
-//     const direction = Math.floor(Math.random() * 4);
-//     let dx = 0, dy = 0;
-//     if (direction === 0) dy = -1; // Up
-//     if (direction === 1) dy = 1;  // Down
-//     if (direction === 2) dx = -1; // Left
-//     if (direction === 3) dx = 1;  // Right
+function moveEnemies () {
+  enemies.forEach(enemy => {
+    // Simple random movement logic
+    const direction = Math.floor(Math.random() * 60);
+    let dx = 0, dy = 0;
+    if (direction === 0) dy = -1; // Up
+    if (direction === 1) dy = 1;  // Down
+    if (direction === 2) dx = -1; // Left
+    if (direction === 3) dx = 1;  // Right
 
-//     const newX = enemy.x + dx;
-//     const newY = enemy.y + dy;
+    const newX = enemy.x + dx;
+    const newY = enemy.y + dy;
 
-//     // Check if the new position is within the grid and not a wall
-//     if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length && grid[newY][newX] !== 1) {
-//       enemy.x = newX;
-//       enemy.y = newY;
-//     }
-//   });
-// }
+    // Check if the new position is within the grid and not a wall
+    if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length && grid[newY][newX] !== 1) {
+      enemy.x = newX;
+      enemy.y = newY;
+    }
+  });
+}
 
 // game loop to run with requestAnimationFrame
 function gameLoop() {

@@ -52,7 +52,7 @@ function generateMaze(size) {
   // Ensure a T-shape (with exactly 4 empty spaces) at the center
   let mid = Math.floor(size / 2);
   let tShape = [
-    [mid, mid], [mid - 1, mid], [mid + 1, mid], [mid, mid - 1]
+    [mid, mid], [mid , mid - 1], [mid - 1, mid], [mid, mid + 1]
   ];
 
   // Remove any walls in the T-shape area

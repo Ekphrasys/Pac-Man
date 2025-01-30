@@ -66,8 +66,16 @@ function drawGrid() {
   }
 }
 
+let lastMoveTime = 0;
+const moveDelay = 200;
 // Pac-man movement
 function movePacman(dx, dy) {
+  const currentTime = Date.now();
+  if (currentTime - lastMoveTime < moveDelay) {
+    return; // Exit if the delay time has not passed
+  }
+  lastMoveTime = currentTime;
+
   const newX = pacman.x + dx;
   const newY = pacman.y + dy;
 
@@ -88,32 +96,31 @@ function movePacman(dx, dy) {
   }
 }
 
-// (Fonction de mouvements épileptiques qu'il faut changer vite)
-// function moveEnemies () {
-//   enemies.forEach(enemy => {
-//     // Simple random movement logic
-//     const direction = Math.floor(Math.random() * 4);
-//     let dx = 0, dy = 0;
-//     if (direction === 0) dy = -1; // Up
-//     if (direction === 1) dy = 1;  // Down
-//     if (direction === 2) dx = -1; // Left
-//     if (direction === 3) dx = 1;  // Right
+// Mouvement random des ennemis un peu débiles
+function moveEnemies () {
+  enemies.forEach(enemy => {
+    // Simple random movement logic
+    const direction = Math.floor(Math.random() * 60);
+    let dx = 0, dy = 0;
+    if (direction === 0) dy = -1; // Up
+    if (direction === 1) dy = 1;  // Down
+    if (direction === 2) dx = -1; // Left
+    if (direction === 3) dx = 1;  // Right
 
-//     const newX = enemy.x + dx;
-//     const newY = enemy.y + dy;
+    const newX = enemy.x + dx;
+    const newY = enemy.y + dy;
 
-//     // Check if the new position is within the grid and not a wall
-//     if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length && grid[newY][newX] !== 1) {
-//       enemy.x = newX;
-//       enemy.y = newY;
-//     }
-//   });
-// }
+    // Check if the new position is within the grid and not a wall
+    if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length && grid[newY][newX] !== 1) {
+      enemy.x = newX;
+      enemy.y = newY;
+    }
+  });
+}
 
 // game loop to run with requestAnimationFrame
 function gameLoop() {
   moveEnemies();
-  movePacman();
   drawGrid();
   requestAnimationFrame(gameLoop);
 }

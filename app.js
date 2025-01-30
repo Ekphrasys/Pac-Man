@@ -97,11 +97,11 @@ function generateMaze(size) {
     }
   }
 
-  // Place dots on open paths (avoid T-shape)
+  // Place dots on open paths (avoid T-shape and inaccessible areas)
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
-      if (grid[y][x] === 0 && !tShape.some(([ty, tx]) => ty === y && tx === x)) {
-        grid[y][x] = 2; // Place dot
+      if (grid[y][x] === 0 && !tShape.some(([ty, tx]) => ty === y && tx === x) && visited[y][x]) {
+        grid[y][x] = 2; // Place dot only in accessible areas
       }
     }
   }

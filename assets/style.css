@@ -42,3 +42,7 @@ body {
     background-color: yellow;
     border-radius: 50%;
   }
+  .enemy {
+    background-color: red;
+    border-radius: 50%;
+  }

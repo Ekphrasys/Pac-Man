@@ -1,36 +1,47 @@
 const gridElement = document.getElementById("grid");
 
-// Configuration du jeu
+// game grid configuration
 const gridSize = 20;
 const grid = [
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1],
-    [1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1],
-    [1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1],
-    [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-    [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
-    [1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1],
-    [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-    [1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1],
-    [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1],
-    [1, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1],
-    [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1],
-    [1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1],
-    [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-    [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
-    [1, 2, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1],
-    [1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1],
-    [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 2, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-  ];
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+  [1, 0, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 1],
+  [1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+  [1, 2, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 0, 1, 1, 2, 1, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 1, 2, 1, 0, 0, 0, 1, 2, 2, 2, 2, 2, 2, 1],
+  [1, 1, 1, 1, 1, 2, 1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 1, 1, 1, 1],
+  [1, 2, 2, 2, 1, 2, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 1, 2, 2, 1],
+  [1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 2, 1],
+  [1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 1, 2, 1, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 2, 1, 1, 2, 1, 1, 2, 1, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+  [1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 1],
+  [1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1],
+  [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+];
 
-// Position de Pac-Man
+// 0 = path
+// 1 = wall
+// 2 = dot
+
+// Pac-Man position
 let pacman = { x: 1, y: 1 };
 
-// Générer la grille HTML
+let enemies = [
+  { x: 10, y: 9 },
+  { x: 10, y: 8 },
+  { x: 11, y: 9 },
+  { x: 9, y: 9 },
+];
+
+// Grid drawing
 function drawGrid() {
-  gridElement.innerHTML = ""; // Effacer la grille existante
+  gridElement.innerHTML = ""; // Remove existing grid
   for (let y = 0; y < grid.length; y++) {
     for (let x = 0; x < grid[y].length; x++) {
       const cell = document.createElement("div");
@@ -43,31 +54,71 @@ function drawGrid() {
         cell.classList.add("pacman");
       }
 
+      // Check if an enemy is at this position
+      enemies.forEach(enemy => {
+        if (x === enemy.x && y === enemy.y) {
+          cell.classList.add("enemy");
+        }
+      });
+
       gridElement.appendChild(cell);
     }
   }
 }
 
-// Déplacement de Pac-Man
+// Pac-man movement
 function movePacman(dx, dy) {
   const newX = pacman.x + dx;
   const newY = pacman.y + dy;
 
-  // Vérifier les collisions avec les murs
-  if (grid[newY][newX] !== 1) {
-    pacman.x = newX;
-    pacman.y = newY;
+  // Check if the new position is within the grid
+  if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length) {
+    // wall collisions
+    if (grid[newY][newX] !== 1) {
+      pacman.x = newX;
+      pacman.y = newY;
 
-    // Manger un point
-    if (grid[newY][newX] === 2) {
-      grid[newY][newX] = 0; // Marquer le point comme mangé
+      // Eat dot
+      if (grid[newY][newX] === 2) {
+        grid[newY][newX] = 0; // mark the dot as eaten
+      }
+
+      drawGrid(); // redraw the grid
     }
-
-    drawGrid(); // Redessiner la grille
   }
 }
 
-// Écouter les touches pour déplacer Pac-Man
+// (Fonction de mouvements épileptiques qu'il faut changer vite)
+// function moveEnemies () {
+//   enemies.forEach(enemy => {
+//     // Simple random movement logic
+//     const direction = Math.floor(Math.random() * 4);
+//     let dx = 0, dy = 0;
+//     if (direction === 0) dy = -1; // Up
+//     if (direction === 1) dy = 1;  // Down
+//     if (direction === 2) dx = -1; // Left
+//     if (direction === 3) dx = 1;  // Right
+
+//     const newX = enemy.x + dx;
+//     const newY = enemy.y + dy;
+
+//     // Check if the new position is within the grid and not a wall
+//     if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length && grid[newY][newX] !== 1) {
+//       enemy.x = newX;
+//       enemy.y = newY;
+//     }
+//   });
+// }
+
+// game loop to run with requestAnimationFrame
+function gameLoop() {
+  moveEnemies();
+  movePacman();
+  drawGrid();
+  requestAnimationFrame(gameLoop);
+}
+
+// Listen for arrow key presses
 document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowUp") movePacman(0, -1);
   if (event.key === "ArrowDown") movePacman(0, 1);
@@ -75,5 +126,6 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowRight") movePacman(1, 0);
 });
 
-// Dessiner la grille initiale
+// Draw the grid for the first time
 drawGrid();
+gameLoop();

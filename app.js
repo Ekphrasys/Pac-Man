@@ -1,6 +1,5 @@
 const gridElement = document.getElementById("grid");
 
-// game grid configuration
 function generateMaze(size) {
   // Create a grid filled with walls (1)
   let grid = Array.from({ length: size }, () => Array(size).fill(1));
@@ -60,6 +59,43 @@ function generateMaze(size) {
   tShape.forEach(([ty, tx]) => {
     grid[ty][tx] = 0;
   });
+
+  // Flood fill to check for inaccessible areas
+  function floodFill(x, y, visited) {
+    if (x < 0 || x >= size || y < 0 || y >= size || grid[y][x] === 1 || visited[y][x]) {
+      return;
+    }
+    visited[y][x] = true;
+    floodFill(x + 1, y, visited);
+    floodFill(x - 1, y, visited);
+    floodFill(x, y + 1, visited);
+    floodFill(x, y - 1, visited);
+  }
+
+  let visited = Array.from({ length: size }, () => Array(size).fill(false));
+  floodFill(1, 1, visited);
+
+  // If there are inaccessible areas, connect them
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      if (grid[y][x] === 0 && !visited[y][x]) {
+        // Find a nearby accessible cell and connect them
+        if (y > 0 && visited[y - 1][x]) {
+          grid[y][x] = 0;
+          visited[y][x] = true;
+        } else if (y < size - 1 && visited[y + 1][x]) {
+          grid[y][x] = 0;
+          visited[y][x] = true;
+        } else if (x > 0 && visited[y][x - 1]) {
+          grid[y][x] = 0;
+          visited[y][x] = true;
+        } else if (x < size - 1 && visited[y][x + 1]) {
+          grid[y][x] = 0;
+          visited[y][x] = true;
+        }
+      }
+    }
+  }
 
   // Place dots on open paths (avoid T-shape)
   for (let y = 0; y < size; y++) {

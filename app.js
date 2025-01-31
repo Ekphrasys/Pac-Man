@@ -246,8 +246,9 @@ function drawGrid() {
   }
 }
 
+let pacmanDirection = { dx: 0, dy: 0 }; // Stores Pac-Man's current direction
 let lastMoveTime = 0;
-const moveDelay = 200;
+const moveDelay = 250; // Controls movement speed (adjust if needed)
 let score = 0;
 const scoreboard = document.getElementById("scoreboard");
 
@@ -281,34 +282,37 @@ function nextLevel(){
 }
 
 // Function to move Pacman
-function movePacman(dx, dy) {
+
+function movePacman() {
     const currentTime = Date.now();
-    if (currentTime - lastMoveTime < moveDelay) return;
+    if (currentTime - lastMoveTime < moveDelay) return; // Enforce movement delay
     lastMoveTime = currentTime;
 
-    const newX = pacman.x + dx;
-    const newY = pacman.y + dy;
+    const newX = pacman.x + pacmanDirection.dx;
+    const newY = pacman.y + pacmanDirection.dy;
 
-    if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length) {
-        if (grid[newY][newX] !== 1) {
-            pacman.x = newX;
-            pacman.y = newY;
+    // Check if the new position is within bounds and not a wall
+    if (grid[newY] && grid[newY][newX] !== 1) {
+        pacman.x = newX;
+        pacman.y = newY;
 
-            // Eat dot and update score
-            if (grid[newY][newX] === 2) {
-                grid[newY][newX] = 0; // Mark dot as eaten
-                updateScore(10); // Each dot gives 10 points
-            }
-
-            // Check if all dots are eaten and reset the game
-            if (allDotsEaten()) {
-                alert("All dots are eaten! Generating new map.");
-                nextLevel(); // Reset the grid with the current score
-            }
-
-            drawGrid(); // Redraw the grid after the move
+        // Eat dot and update score
+        if (grid[newY][newX] === 2) {
+            grid[newY][newX] = 0; // Mark dot as eaten
+            updateScore(10); // Each dot gives 10 points
         }
+
+        // Check if all dots are eaten and start new level
+        if (allDotsEaten()) {
+            alert("All dots are eaten! Generating new map.");
+            nextLevel();
+        }
+    } else {
+        // If Pac-Man hits a wall, stop moving
+        pacmanDirection = { dx: 0, dy: 0 };
     }
+
+    drawGrid(); // Redraw the grid after moving
 }
 
 // Function to move enemies
@@ -333,6 +337,7 @@ function moveEnemies () {
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {
+  movePacman();
   moveEnemies();
   checkCollisions();
   updateInvulnerability();
@@ -343,10 +348,10 @@ function gameLoop() {
 
 // Listen for arrow key presses
 document.addEventListener("keydown", (event) => {
-    if (event.key === "ArrowUp") movePacman(0, -1);
-    if (event.key === "ArrowDown") movePacman(0, 1);
-    if (event.key === "ArrowLeft") movePacman(-1, 0);
-    if (event.key === "ArrowRight") movePacman(1, 0);
+  if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
+  if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
+  if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
+  if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
 });
 
 // Draw the grid for the first time

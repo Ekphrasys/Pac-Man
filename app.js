@@ -23,7 +23,7 @@ function generateMaze(size) {
   }
 
   // Start carving from (1,1)
-  grid[1][1] = 0;
+  grid[1][1] = 0; // Ensure starting cell is a path
   carvePassages(1, 1);
 
   // Reduce density of walls to allow for more open spaces
@@ -106,12 +106,95 @@ function generateMaze(size) {
     }
   }
 
+  // Ensure the starting cell (1,1) does not have a dot
+  grid[1][1] = 0;
+
   return grid;
 }
 
 
 
-let grid = generateMaze(20)
+let lives = 3;
+let isInvulnerable = false;
+let invulnerabilityEndTime = 0;
+
+// Function to update lives
+function updateLives() {
+    const livesElement = document.getElementById("lives");
+    livesElement.textContent = `Lives: ${lives}`;
+}
+
+// Function to handle Pac-Man being hit by an enemy
+function handleEnemyCollision() {
+    if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
+
+    lives--; // Lose a life
+    updateLives();
+
+    if (lives <= 0) {
+        alert("Game Over! Resetting game.");
+        resetGame();
+        lives = 3; // Reset lives
+        updateLives();
+    } else {
+        // Make Pac-Man invulnerable for 5 seconds
+        isInvulnerable = true;
+        invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
+    }
+}
+
+// Function to check for collisions between Pac-Man and enemies
+function checkCollisions() {
+    enemies.forEach(enemy => {
+        if (pacman.x === enemy.x && pacman.y === enemy.y) {
+            handleEnemyCollision();
+        }
+    });
+}
+
+// Function to update Pac-Man's invulnerability state
+function updateInvulnerability() {
+    if (isInvulnerable && Date.now() >= invulnerabilityEndTime) {
+        isInvulnerable = false; // End invulnerability
+    }
+}
+
+function drawPacMan(cell) {
+  if (isInvulnerable) {
+      // Flash Pac-Man by toggling visibility every 200ms
+      const flashInterval = 200;
+      const isVisible = Math.floor(Date.now() / flashInterval) % 2 === 0;
+      if (isVisible) {
+          cell.classList.add("pacman");
+      }
+  } else {
+      cell.classList.add("pacman");
+  }
+}
+
+let fps = 0;
+let lastFrameTime = performance.now();
+const fpsUpdateInterval = 1000; // Update FPS every 1 second
+let frameCount = 0;
+
+// Function to update the FPS counter
+function updateFPS() {
+  const currentTime = performance.now();
+  const deltaTime = currentTime - lastFrameTime;
+
+  frameCount++;
+
+  // Update FPS every second
+  if (deltaTime >= fpsUpdateInterval) {
+    fps = Math.round((frameCount * 1000) / deltaTime); // Calculate FPS
+    document.getElementById("fps-counter").textContent = `FPS: ${fps}`;
+
+    // Reset counters
+    frameCount = 0;
+    lastFrameTime = currentTime;
+  }
+}
+
 
 // 0 = path
 // 1 = wall
@@ -119,38 +202,47 @@ let grid = generateMaze(20)
 
 // Pac-Man position
 let pacman = { x: 1, y: 1 };
+let grid = generateMaze(20)
+let enemies = [];
 
-let enemies = [
-  { x: 10, y: 9 },
-  { x: 10, y: 8 },
-  { x: 11, y: 9 },
-  { x: 9, y: 9 },
-];
+function initializeEnemies() {
+  const mid = Math.floor(grid.length / 2); // Middle of the grid
+  const tShape = [
+    [mid, mid],     // Center
+    [mid, mid - 1], // Left
+    [mid - 1, mid], // Top
+    [mid, mid + 1]  // Right
+  ];
+
+  // Place enemies in the T-shaped area
+  enemies = tShape.map(([y, x]) => ({ x, y }));
+}
 
 // Grid drawing
 function drawGrid() {
   gridElement.innerHTML = ""; // Remove existing grid
   for (let y = 0; y < grid.length; y++) {
-    for (let x = 0; x < grid[y].length; x++) {
-      const cell = document.createElement("div");
-      cell.classList.add("cell");
-      if (grid[y][x] === 1) cell.classList.add("wall");
-      else if (grid[y][x] === 2) cell.classList.add("point");
-      else cell.classList.add("path");
+      for (let x = 0; x < grid[y].length; x++) {
+          const cell = document.createElement("div");
+          cell.classList.add("cell");
+          if (grid[y][x] === 1) cell.classList.add("wall");
+          else if (grid[y][x] === 2) cell.classList.add("point");
+          else cell.classList.add("path");
 
-      if (x === pacman.x && y === pacman.y) {
-        cell.classList.add("pacman");
+          // Draw Pac-Man with invulnerability effect
+          if (x === pacman.x && y === pacman.y) {
+              drawPacMan(cell);
+          }
+
+          // Draw enemies
+          enemies.forEach(enemy => {
+              if (x === enemy.x && y === enemy.y) {
+                  cell.classList.add("enemy");
+              }
+          });
+
+          gridElement.appendChild(cell);
       }
-
-      // Check if an enemy is at this position
-      enemies.forEach(enemy => {
-        if (x === enemy.x && y === enemy.y) {
-          cell.classList.add("enemy");
-        }
-      });
-
-      gridElement.appendChild(cell);
-    }
   }
 }
 
@@ -172,10 +264,20 @@ function allDotsEaten() {
 
 // Function to generate a new maze
 function resetGame() {
+    score = 0
+    updateScore(score)
     grid = generateMaze(20); // Generate a new maze
     drawGrid(); // Redraw the grid
+    initializeEnemies();
     pacman.x = 1
     pacman.y = 1
+}
+
+function nextLevel(){
+  grid = generateMaze(20);
+  drawGrid();
+  pacman.x = 1
+  pacman.y = 1
 }
 
 // Function to move Pacman
@@ -201,7 +303,7 @@ function movePacman(dx, dy) {
             // Check if all dots are eaten and reset the game
             if (allDotsEaten()) {
                 alert("All dots are eaten! Generating new map.");
-                resetGame(); // Reset the grid with the current score
+                nextLevel(); // Reset the grid with the current score
             }
 
             drawGrid(); // Redraw the grid after the move
@@ -231,9 +333,12 @@ function moveEnemies () {
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {
-    moveEnemies();
-    drawGrid();
-    requestAnimationFrame(gameLoop);
+  moveEnemies();
+  checkCollisions();
+  updateInvulnerability();
+  drawGrid();
+  updateFPS();
+  requestAnimationFrame(gameLoop);
 }
 
 // Listen for arrow key presses
@@ -245,5 +350,7 @@ document.addEventListener("keydown", (event) => {
 });
 
 // Draw the grid for the first time
+updateLives();
 drawGrid();
+initializeEnemies();
 gameLoop();

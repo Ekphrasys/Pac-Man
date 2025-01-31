@@ -7,6 +7,8 @@ body {
     font-family: Arial, sans-serif;
   }
   .grid {
+    position : absolute;
+    top:10%;
     display: grid;
     grid-template-columns: repeat(20, 30px); /* 20 colonnes */
     grid-template-rows: repeat(20, 30px);    /* 20 lignes */
@@ -45,11 +47,30 @@ body {
     background-color: red;
     border-radius: 50%;
   }
+
   #scoreboard {
     position: absolute;
-    top: 10px;
+    top: 5%;
     left: 10px;
     color: white;
     font-size: 24px;
     font-weight: bold;
+}
+
+#lives {
+  position: absolute;
+  top: 90%;
+  left: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+#fps-counter {
+  position: absolute;
+  top: 5%;
+  right: 10px;
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
 }

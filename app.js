@@ -249,6 +249,8 @@ function drawGrid() {
 let pacmanDirection = { dx: 0, dy: 0 }; // Stores Pac-Man's current direction
 let lastMoveTime = 0;
 const moveDelay = 250; // Controls movement speed (adjust if needed)
+let lastEnemyMoveTime = 0;
+const enemyMoveDelay = 600; // Adjust this value to change enemy speed
 let score = 0;
 const scoreboard = document.getElementById("scoreboard");
 
@@ -278,7 +280,8 @@ function nextLevel(){
   grid = generateMaze(20);
   drawGrid();
   pacman.x = 1
-  pacman.y = 1
+  pacman.y = 1 
+  initializeEnemies()
 }
 
 // Function to move Pacman
@@ -314,26 +317,51 @@ function movePacman() {
 
     drawGrid(); // Redraw the grid after moving
 }
+  
 
 // Function to move enemies
-function moveEnemies () {
-    enemies.forEach(enemy => {
-        const direction = Math.floor(Math.random() * 60);
-        let dx = 0, dy = 0;
-        if (direction === 0) dy = -1; // Up
-        if (direction === 1) dy = 1;  // Down
-        if (direction === 2) dx = -1; // Left
-        if (direction === 3) dx = 1;  // Right
+function moveEnemies() {
+  const currentTime = Date.now();
+  if (currentTime - lastEnemyMoveTime < enemyMoveDelay) return; // Enforce movement delay
+  lastEnemyMoveTime = currentTime;
 
-        const newX = enemy.x + dx;
-        const newY = enemy.y + dy;
+  enemies.forEach(enemy => {
+      // Calculate direction towards Pac-Man
+      const dx = Math.sign(pacman.x - enemy.x);
+      const dy = Math.sign(pacman.y - enemy.y);
 
-        if (newX >= 0 && newX < grid[0].length && newY >= 0 && newY < grid.length && grid[newY][newX] !== 1) {
-            enemy.x = newX;
-            enemy.y = newY;
-        }
-    });
+      // Randomly choose between horizontal and vertical movement
+      let newX = enemy.x;
+      let newY = enemy.y;
+      if (Math.random() < 0.5) {
+          newX += dx;
+      } else {
+          newY += dy;
+      }
+
+      // Check if the new position is within bounds and not a wall
+      if (grid[newY] && grid[newY][newX] !== 1) {
+          enemy.x = newX;
+          enemy.y = newY;
+      } else {
+          // If the enemy hits a wall, try the other direction
+          if (newX !== enemy.x) {
+              newY = enemy.y + dy;
+          } else {
+              newX = enemy.x + dx;
+          }
+          
+          // Check again if this new position is valid
+          if (grid[newY] && grid[newY][newX] !== 1) {
+              enemy.x = newX;
+              enemy.y = newY;
+          }
+      }
+  });
+
+  drawGrid(); // Redraw the grid after moving enemies
 }
+
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {

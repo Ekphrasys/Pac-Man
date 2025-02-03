@@ -322,45 +322,76 @@ function movePacman() {
 // Function to move enemies
 function moveEnemies() {
   const currentTime = Date.now();
-  if (currentTime - lastEnemyMoveTime < enemyMoveDelay) return; // Enforce movement delay
+  if (currentTime - lastEnemyMoveTime < enemyMoveDelay) return;
   lastEnemyMoveTime = currentTime;
 
   enemies.forEach(enemy => {
-      // Calculate direction towards Pac-Man
-      const dx = Math.sign(pacman.x - enemy.x);
-      const dy = Math.sign(pacman.y - enemy.y);
-
-      // Randomly choose between horizontal and vertical movement
-      let newX = enemy.x;
-      let newY = enemy.y;
-      if (Math.random() < 0.5) {
-          newX += dx;
-      } else {
-          newY += dy;
-      }
-
-      // Check if the new position is within bounds and not a wall
-      if (grid[newY] && grid[newY][newX] !== 1) {
-          enemy.x = newX;
-          enemy.y = newY;
-      } else {
-          // If the enemy hits a wall, try the other direction
-          if (newX !== enemy.x) {
-              newY = enemy.y + dy;
-          } else {
-              newX = enemy.x + dx;
-          }
-          
-          // Check again if this new position is valid
-          if (grid[newY] && grid[newY][newX] !== 1) {
-              enemy.x = newX;
-              enemy.y = newY;
-          }
+      const path = findPath(enemy, pacman);
+      if (path.length > 1) {
+          enemy.x = path[1].x;
+          enemy.y = path[1].y;
       }
   });
 
-  drawGrid(); // Redraw the grid after moving enemies
+  drawGrid();
 }
+
+function findPath(start, goal) {
+  const openSet = [start];
+  const cameFrom = new Map();
+  const gScore = new Map();
+  const fScore = new Map();
+
+  gScore.set(start, 0);
+  fScore.set(start, heuristic(start, goal));
+
+  while (openSet.length > 0) {
+      const current = openSet.reduce((a, b) => fScore.get(a) < fScore.get(b) ? a : b);
+
+      if (current.x === goal.x && current.y === goal.y) {
+          return reconstructPath(cameFrom, current);
+      }
+
+      openSet.splice(openSet.indexOf(current), 1);
+
+      getNeighbors(current).forEach(neighbor => {
+          const tentativeGScore = gScore.get(current) + 1;
+
+          if (!gScore.has(neighbor) || tentativeGScore < gScore.get(neighbor)) {
+              cameFrom.set(neighbor, current);
+              gScore.set(neighbor, tentativeGScore);
+              fScore.set(neighbor, gScore.get(neighbor) + heuristic(neighbor, goal));
+
+              if (!openSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+                  openSet.push(neighbor);
+              }
+          }
+      });
+  }
+
+  return [];
+}
+
+function getNeighbors(node) {
+  const directions = [{dx: 1, dy: 0}, {dx: -1, dy: 0}, {dx: 0, dy: 1}, {dx: 0, dy: -1}];
+  return directions
+      .map(dir => ({x: node.x + dir.dx, y: node.y + dir.dy}))
+      .filter(pos => grid[pos.y] && grid[pos.y][pos.x] !== 1);
+}
+
+function heuristic(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+function reconstructPath(cameFrom, current) {
+  const path = [current];
+  while (cameFrom.has(current)) {
+      current = cameFrom.get(current);
+      path.unshift(current);
+  }
+  return path;
+}
+
 
 
 // Game loop to run with requestAnimationFrame

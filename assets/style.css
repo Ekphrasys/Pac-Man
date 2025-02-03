@@ -22,6 +22,65 @@ body {
   .wall {
     background-color: blue;
   }
+  
+  .wall-horizontal {
+    border-top: 4px solid blue;
+    border-bottom: 4px solid blue;
+  }
+  
+  .wall-vertical {
+    border-left: 4px solid blue;
+    border-right: 4px solid blue;
+  }
+  
+  .wall-corner-top-left {
+    border-top-left-radius: 15px;
+    border-top: 4px solid blue;
+    border-left: 4px solid blue;
+  }
+  
+  .wall-corner-top-right {
+    border-top-right-radius: 15px;
+    border-top: 4px solid blue;
+    border-right: 4px solid blue;
+  }
+  
+  .wall-corner-bottom-left {
+    border-bottom-left-radius: 15px;
+    border-bottom: 4px solid blue;
+    border-left: 4px solid blue;
+  }
+  
+  .wall-corner-bottom-right {
+    border-bottom-right-radius: 15px;
+    border-bottom: 4px solid blue;
+    border-right: 4px solid blue;
+  }
+  
+  .wall-top-end {
+    border-top: 4px solid blue;
+  }
+  
+  .wall-bottom-end {
+    border-bottom: 4px solid blue;
+  }
+  
+  .wall-left-end {
+    border-left: 4px solid blue;
+  }
+  
+  .wall-right-end {
+    border-right: 4px solid blue;
+  }
+  
+  .wall-intersection {
+    border: 4px solid blue;
+  }
+  
+  .wall-single {
+    background-color: blue;
+  }
+  
   .path {
     background-color: black;
   }
@@ -43,10 +102,16 @@ body {
     background-color: yellow;
     border-radius: 50%;
   }
-  .enemy {
+  .enemy-red {
     background-color: red;
     border-radius: 50%;
   }
+  
+  .enemy-blue {
+    background-color: blue;
+    border-radius: 50%;
+  }
+  
 
   #scoreboard {
     position: absolute;

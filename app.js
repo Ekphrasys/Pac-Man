@@ -215,25 +215,51 @@ function initializeEnemies() {
 }
 
 // Grid drawing
+function getWallClass(x, y) {
+  if (grid[y][x] !== 1) return ""; // Not a wall
+
+  const top = y > 0 && grid[y - 1][x] === 1;
+  const bottom = y < grid.length - 1 && grid[y + 1][x] === 1;
+  const left = x > 0 && grid[y][x - 1] === 1;
+  const right = x < grid[y].length - 1 && grid[y][x + 1] === 1;
+
+  if (top && bottom && left && right) return "wall-intersection";
+  if (top && bottom && left) return "wall-right-end";
+  if (top && bottom && right) return "wall-left-end";
+  if (left && right && top) return "wall-bottom-end";
+  if (left && right && bottom) return "wall-top-end";
+  if (left && right) return "wall-horizontal";
+  if (top && bottom) return "wall-vertical";
+  if (top && left) return "wall-corner-bottom-right";
+  if (top && right) return "wall-corner-bottom-left";
+  if (bottom && left) return "wall-corner-top-right";
+  if (bottom && right) return "wall-corner-top-left";
+
+  return "wall-single"; // Default for isolated walls
+}
+
 function drawGrid() {
-  gridElement.innerHTML = ""; // Remove existing grid
+  gridElement.innerHTML = ""; // Clear previous grid
   for (let y = 0; y < grid.length; y++) {
     for (let x = 0; x < grid[y].length; x++) {
       const cell = document.createElement("div");
       cell.classList.add("cell");
-      if (grid[y][x] === 1) cell.classList.add("wall");
-      else if (grid[y][x] === 2) cell.classList.add("point");
-      else cell.classList.add("path");
 
-      // Draw Pac-Man with invulnerability effect
+      if (grid[y][x] === 1) {
+        cell.classList.add("wall", getWallClass(x, y));
+      } else if (grid[y][x] === 2) {
+        cell.classList.add("point");
+      } else {
+        cell.classList.add("path");
+      }
+
       if (x === pacman.x && y === pacman.y) {
         drawPacMan(cell);
       }
 
-      // Draw enemies
-      enemies.forEach(enemy => {
+      enemies.forEach((enemy, index) => {
         if (x === enemy.x && y === enemy.y) {
-          cell.classList.add("enemy");
+          cell.classList.add(index % 2 === 0 ? "enemy-blue" : "enemy-red");
         }
       });
 
@@ -241,6 +267,8 @@ function drawGrid() {
     }
   }
 }
+
+
 
 let pacmanDirection = { dx: 0, dy: 0 }; // Stores Pac-Man's current direction
 let lastMoveTime = 0;
@@ -409,6 +437,7 @@ function pauseGame() {
 function restartGame() {
   resetGame(); // Reset game
 }
+
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {

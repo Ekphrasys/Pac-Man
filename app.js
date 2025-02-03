@@ -1,4 +1,7 @@
 const gridElement = document.getElementById("grid");
+const pauseMenu = document.getElementById("pause-menu");
+const continueButton = document.getElementById("continue-button");
+const resetButton = document.getElementById("reset-button");
 
 function generateMaze(size) {
   // Create a grid filled with walls (1)
@@ -432,39 +435,49 @@ let isPaused = false;
 
 function pauseGame() {
   isPaused = !isPaused; // Toggle pause
+  pauseMenu.classList.toggle("hidden", !isPaused); // Show/hide pause menu
 }
 
-function restartGame() {
-  resetGame(); // Reset game
-}
+continueButton.addEventListener("click", () => {
+  pauseGame(); // Unpause the game
+});
 
+resetButton.addEventListener("click", () => {
+  resetGame(); // Reset the game
+  pauseGame(); // Hide the pause menu
+});
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {
-  if (!isPaused) {
-    movePacman();
-    moveEnemies();
-    checkCollisions();
-    updateInvulnerability();
-    drawGrid();
-    updateFPS();
+  if (isPaused) {
+    requestAnimationFrame(gameLoop);
+    return; // Stop further updates
   }
+
+  movePacman();
+  moveEnemies();
+  checkCollisions();
+  updateInvulnerability();
+  drawGrid();
+  updateFPS();
 
   requestAnimationFrame(gameLoop);
 }
 
+
 // Listen for arrow key presses
 document.addEventListener("keydown", (event) => {
-  if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
-  if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
-  if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
-  if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
-  if (event.key === 'Escape') {
-    pauseGame();
-  } else if (event.key === 'r') {
-    restartGame();
+  if (event.key === "Escape") {
+      pauseGame(); // Toggle pause menu
+  } else if (!isPaused) {
+      // Only allow movement if the game is not paused
+      if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
+      if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
+      if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
+      if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
   }
 });
+
 
 // Draw the grid for the first time
 updateLives();

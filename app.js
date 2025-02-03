@@ -206,7 +206,7 @@ let grid = generateMaze(20)
 let enemies = [];
 
 function initializeEnemies() {
-  enemies = [
+    enemies = [
     { x: 11, y: 11 },
     { x: 10, y: 11 },
     { x: 9, y: 11 },

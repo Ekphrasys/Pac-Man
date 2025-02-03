@@ -52,7 +52,7 @@ function generateMaze(size) {
   // Ensure a T-shape (with exactly 4 empty spaces) at the center
   let mid = Math.floor(size / 2);
   let tShape = [
-    [mid, mid], [mid , mid - 1], [mid - 1, mid], [mid, mid + 1]
+    [mid, mid], [mid, mid - 1], [mid - 1, mid], [mid, mid + 1]
   ];
 
   // Remove any walls in the T-shape area
@@ -120,55 +120,55 @@ let invulnerabilityEndTime = 0;
 
 // Function to update lives
 function updateLives() {
-    const livesElement = document.getElementById("lives");
-    livesElement.textContent = `Lives: ${lives}`;
+  const livesElement = document.getElementById("lives");
+  livesElement.textContent = `Lives: ${lives}`;
 }
 
 // Function to handle Pac-Man being hit by an enemy
 function handleEnemyCollision() {
-    if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
+  if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
 
-    lives--; // Lose a life
+  lives--; // Lose a life
+  updateLives();
+
+  if (lives <= 0) {
+    alert("Game Over! Resetting game.");
+    resetGame();
+    lives = 3; // Reset lives
     updateLives();
-
-    if (lives <= 0) {
-        alert("Game Over! Resetting game.");
-        resetGame();
-        lives = 3; // Reset lives
-        updateLives();
-    } else {
-        // Make Pac-Man invulnerable for 5 seconds
-        isInvulnerable = true;
-        invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
-    }
+  } else {
+    // Make Pac-Man invulnerable for 5 seconds
+    isInvulnerable = true;
+    invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
+  }
 }
 
 // Function to check for collisions between Pac-Man and enemies
 function checkCollisions() {
-    enemies.forEach(enemy => {
-        if (pacman.x === enemy.x && pacman.y === enemy.y) {
-            handleEnemyCollision();
-        }
-    });
+  enemies.forEach(enemy => {
+    if (pacman.x === enemy.x && pacman.y === enemy.y) {
+      handleEnemyCollision();
+    }
+  });
 }
 
 // Function to update Pac-Man's invulnerability state
 function updateInvulnerability() {
-    if (isInvulnerable && Date.now() >= invulnerabilityEndTime) {
-        isInvulnerable = false; // End invulnerability
-    }
+  if (isInvulnerable && Date.now() >= invulnerabilityEndTime) {
+    isInvulnerable = false; // End invulnerability
+  }
 }
 
 function drawPacMan(cell) {
   if (isInvulnerable) {
-      // Flash Pac-Man by toggling visibility every 200ms
-      const flashInterval = 200;
-      const isVisible = Math.floor(Date.now() / flashInterval) % 2 === 0;
-      if (isVisible) {
-          cell.classList.add("pacman");
-      }
-  } else {
+    // Flash Pac-Man by toggling visibility every 200ms
+    const flashInterval = 200;
+    const isVisible = Math.floor(Date.now() / flashInterval) % 2 === 0;
+    if (isVisible) {
       cell.classList.add("pacman");
+    }
+  } else {
+    cell.classList.add("pacman");
   }
 }
 
@@ -206,7 +206,7 @@ let grid = generateMaze(20)
 let enemies = [];
 
 function initializeEnemies() {
-    enemies = [
+  enemies = [
     { x: 11, y: 11 },
     { x: 10, y: 11 },
     { x: 9, y: 11 },
@@ -218,27 +218,27 @@ function initializeEnemies() {
 function drawGrid() {
   gridElement.innerHTML = ""; // Remove existing grid
   for (let y = 0; y < grid.length; y++) {
-      for (let x = 0; x < grid[y].length; x++) {
-          const cell = document.createElement("div");
-          cell.classList.add("cell");
-          if (grid[y][x] === 1) cell.classList.add("wall");
-          else if (grid[y][x] === 2) cell.classList.add("point");
-          else cell.classList.add("path");
+    for (let x = 0; x < grid[y].length; x++) {
+      const cell = document.createElement("div");
+      cell.classList.add("cell");
+      if (grid[y][x] === 1) cell.classList.add("wall");
+      else if (grid[y][x] === 2) cell.classList.add("point");
+      else cell.classList.add("path");
 
-          // Draw Pac-Man with invulnerability effect
-          if (x === pacman.x && y === pacman.y) {
-              drawPacMan(cell);
-          }
-
-          // Draw enemies
-          enemies.forEach(enemy => {
-              if (x === enemy.x && y === enemy.y) {
-                  cell.classList.add("enemy");
-              }
-          });
-
-          gridElement.appendChild(cell);
+      // Draw Pac-Man with invulnerability effect
+      if (x === pacman.x && y === pacman.y) {
+        drawPacMan(cell);
       }
+
+      // Draw enemies
+      enemies.forEach(enemy => {
+        if (x === enemy.x && y === enemy.y) {
+          cell.classList.add("enemy");
+        }
+      });
+
+      gridElement.appendChild(cell);
+    }
   }
 }
 
@@ -252,68 +252,71 @@ const scoreboard = document.getElementById("scoreboard");
 
 // Function to update the score
 function updateScore(points) {
-    score += points;
-    scoreboard.textContent = `Score: ${score}`;
+  score += points;
+  scoreboard.textContent = `Score: ${score}`;
 }
 
 // Function to check if all dots are eaten
 function allDotsEaten() {
-    return grid.every(row => row.every(cell => cell !== 2)); // Check if there are no dots left
+  return grid.every(row => row.every(cell => cell !== 2)); // Check if there are no dots left
 }
 
 // Function to generate a new maze
 function resetGame() {
-    score = 0
-    updateScore(score)
-    grid = generateMaze(20); // Generate a new maze
-    drawGrid(); // Redraw the grid
-    initializeEnemies();
-    pacman.x = 1
-    pacman.y = 1
+  score = 0
+  updateScore(score)
+  grid = generateMaze(20); // Generate a new maze
+  drawGrid(); // Redraw the grid
+  initializeEnemies();
+  pacman.x = 1;
+  pacman.y = 1;
+  pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
+  drawGrid(); // Redraw the grid
+  isPaused = false; // Unpause the game
 }
 
-function nextLevel(){
+function nextLevel() {
   grid = generateMaze(20);
   drawGrid();
   pacman.x = 1
-  pacman.y = 1 
+  pacman.y = 1
   initializeEnemies()
 }
 
 // Function to move Pacman
 
 function movePacman() {
-    const currentTime = Date.now();
-    if (currentTime - lastMoveTime < moveDelay) return; // Enforce movement delay
-    lastMoveTime = currentTime;
+  const currentTime = Date.now();
+  if (currentTime - lastMoveTime < moveDelay) return; // Enforce movement delay
+  lastMoveTime = currentTime;
 
-    const newX = pacman.x + pacmanDirection.dx;
-    const newY = pacman.y + pacmanDirection.dy;
+  const newX = pacman.x + pacmanDirection.dx;
+  const newY = pacman.y + pacmanDirection.dy;
 
-    // Check if the new position is within bounds and not a wall
-    if (grid[newY] && grid[newY][newX] !== 1) {
-        pacman.x = newX;
-        pacman.y = newY;
+  // Check if the new position is within bounds and not a wall
+  if (grid[newY] && grid[newY][newX] !== 1) {
+    pacman.x = newX;
+    pacman.y = newY;
 
-        // Eat dot and update score
-        if (grid[newY][newX] === 2) {
-            grid[newY][newX] = 0; // Mark dot as eaten
-            updateScore(10); // Each dot gives 10 points
-        }
-
-        // Check if all dots are eaten and start new level
-        if (allDotsEaten()) {
-            alert("All dots are eaten! Generating new map.");
-            nextLevel();
-        }
-    } else {
-        // If Pac-Man hits a wall, stop moving
-        pacmanDirection = { dx: 0, dy: 0 };
+    // Eat dot and update score
+    if (grid[newY][newX] === 2) {
+      grid[newY][newX] = 0; // Mark dot as eaten
+      updateScore(10); // Each dot gives 10 points
     }
 
-    drawGrid(); // Redraw the grid after moving
+    // Check if all dots are eaten and start new level
+    if (allDotsEaten()) {
+      alert("All dots are eaten! Generating new map.");
+      nextLevel();
+    }
+  } else {
+    // If Pac-Man hits a wall, stop moving
+    pacmanDirection = { dx: 0, dy: 0 };
+  }
+
+  drawGrid(); // Redraw the grid after moving
 }
-  
+
 
 // Function to move enemies
 function moveEnemies() {
@@ -322,11 +325,11 @@ function moveEnemies() {
   lastEnemyMoveTime = currentTime;
 
   enemies.forEach(enemy => {
-      const path = findPath(enemy, pacman);
-      if (path.length > 1) {
-          enemy.x = path[1].x;
-          enemy.y = path[1].y;
-      }
+    const path = findPath(enemy, pacman);
+    if (path.length > 1) {
+      enemy.x = path[1].x;
+      enemy.y = path[1].y;
+    }
   });
 
   drawGrid();
@@ -342,37 +345,37 @@ function findPath(start, goal) {
   fScore.set(start, heuristic(start, goal));
 
   while (openSet.length > 0) {
-      const current = openSet.reduce((a, b) => fScore.get(a) < fScore.get(b) ? a : b);
+    const current = openSet.reduce((a, b) => fScore.get(a) < fScore.get(b) ? a : b);
 
-      if (current.x === goal.x && current.y === goal.y) {
-          return reconstructPath(cameFrom, current);
+    if (current.x === goal.x && current.y === goal.y) {
+      return reconstructPath(cameFrom, current);
+    }
+
+    openSet.splice(openSet.indexOf(current), 1);
+
+    getNeighbors(current).forEach(neighbor => {
+      const tentativeGScore = gScore.get(current) + 1;
+
+      if (!gScore.has(neighbor) || tentativeGScore < gScore.get(neighbor)) {
+        cameFrom.set(neighbor, current);
+        gScore.set(neighbor, tentativeGScore);
+        fScore.set(neighbor, gScore.get(neighbor) + heuristic(neighbor, goal));
+
+        if (!openSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
+          openSet.push(neighbor);
+        }
       }
-
-      openSet.splice(openSet.indexOf(current), 1);
-
-      getNeighbors(current).forEach(neighbor => {
-          const tentativeGScore = gScore.get(current) + 1;
-
-          if (!gScore.has(neighbor) || tentativeGScore < gScore.get(neighbor)) {
-              cameFrom.set(neighbor, current);
-              gScore.set(neighbor, tentativeGScore);
-              fScore.set(neighbor, gScore.get(neighbor) + heuristic(neighbor, goal));
-
-              if (!openSet.some(node => node.x === neighbor.x && node.y === neighbor.y)) {
-                  openSet.push(neighbor);
-              }
-          }
-      });
+    });
   }
 
   return [];
 }
 
 function getNeighbors(node) {
-  const directions = [{dx: 1, dy: 0}, {dx: -1, dy: 0}, {dx: 0, dy: 1}, {dx: 0, dy: -1}];
+  const directions = [{ dx: 1, dy: 0 }, { dx: -1, dy: 0 }, { dx: 0, dy: 1 }, { dx: 0, dy: -1 }];
   return directions
-      .map(dir => ({x: node.x + dir.dx, y: node.y + dir.dy}))
-      .filter(pos => grid[pos.y] && grid[pos.y][pos.x] !== 1);
+    .map(dir => ({ x: node.x + dir.dx, y: node.y + dir.dy }))
+    .filter(pos => grid[pos.y] && grid[pos.y][pos.x] !== 1);
 }
 
 function heuristic(a, b) {
@@ -382,22 +385,33 @@ function heuristic(a, b) {
 function reconstructPath(cameFrom, current) {
   const path = [current];
   while (cameFrom.has(current)) {
-      current = cameFrom.get(current);
-      path.unshift(current);
+    current = cameFrom.get(current);
+    path.unshift(current);
   }
   return path;
 }
 
+let isPaused = false;
 
+function pauseGame() {
+  isPaused = !isPaused; // Toggle pause
+}
+
+function restartGame() {
+  resetGame(); // Reset game
+}
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {
-  movePacman();
-  moveEnemies();
-  checkCollisions();
-  updateInvulnerability();
-  drawGrid();
-  updateFPS();
+  if (!isPaused) {
+    movePacman();
+    moveEnemies();
+    checkCollisions();
+    updateInvulnerability();
+    drawGrid();
+    updateFPS();
+  }
+
   requestAnimationFrame(gameLoop);
 }
 
@@ -407,6 +421,11 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
   if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
   if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
+  if (event.key === 'Escape') {
+    pauseGame();
+  } else if (event.key === 'r') {
+    restartGame();
+  }
 });
 
 // Draw the grid for the first time

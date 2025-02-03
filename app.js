@@ -259,7 +259,7 @@ function drawGrid() {
 
       enemies.forEach((enemy, index) => {
         if (x === enemy.x && y === enemy.y) {
-          cell.classList.add(index % 2 === 0 ? "enemy-blue" : "enemy-red");
+          cell.classList.add(index % 2 === 0 ? "enemy-orange" : "enemy-red");
         }
       });
 

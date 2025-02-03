@@ -208,7 +208,7 @@ let enemies = [];
 function initializeEnemies() {
   enemies = [
     { x: 11, y: 11 },
-    { x: 10, y: 11 },
+    { x: 10, y: 10 },
     { x: 9, y: 11 },
     { x: 10, y: 10 },
   ];
@@ -327,8 +327,17 @@ function moveEnemies() {
   enemies.forEach(enemy => {
     const path = findPath(enemy, pacman);
     if (path.length > 1) {
-      enemy.x = path[1].x;
-      enemy.y = path[1].y;
+      const nextCell = path[1];
+
+      // Check if the next cell is not occupied by another enemy
+      const isCellOccupied = enemies.some(otherEnemy => 
+        otherEnemy.x === nextCell.x && otherEnemy.y === nextCell.y
+      );
+
+      if (!isCellOccupied) {
+        enemy.x = nextCell.x;
+        enemy.y = nextCell.y;
+      }
     }
   });
 

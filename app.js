@@ -206,16 +206,12 @@ let grid = generateMaze(20)
 let enemies = [];
 
 function initializeEnemies() {
-  const mid = Math.floor(grid.length / 2); // Middle of the grid
-  const tShape = [
-    [mid, mid],     // Center
-    [mid, mid - 1], // Left
-    [mid - 1, mid], // Top
-    [mid, mid + 1]  // Right
+  enemies = [
+    { x: 11, y: 11 },
+    { x: 10, y: 11 },
+    { x: 9, y: 11 },
+    { x: 10, y: 10 },
   ];
-
-  // Place enemies in the T-shaped area
-  enemies = tShape.map(([y, x]) => ({ x, y }));
 }
 
 // Grid drawing

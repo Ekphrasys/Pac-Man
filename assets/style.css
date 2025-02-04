@@ -197,3 +197,39 @@ body {
 .hidden {
   display: none;
 }
+
+/* Main Menu Styles */
+#main-menu {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  z-index: 1000;
+}
+
+#main-menu h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+#main-menu button {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 18px;
+  background-color: yellow;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+#main-menu button:hover {
+  background-color: orange;
+}

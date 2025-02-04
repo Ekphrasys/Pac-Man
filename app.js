@@ -460,14 +460,16 @@ function reconstructPath(cameFrom, current) {
 let isPaused = false;
 
 function pauseGame() {
+  if (!mainMenu.classList.contains("hidden")) return; // Do not pause if main menu is shown
+
   isPaused = !isPaused; // Toggle pause
   pauseMenu.classList.toggle("hidden", !isPaused); // Show/hide pause menu
 
   if (isPaused) {
-    isTimerPaused = true; // pause the timer
+      isTimerPaused = true; // pause the timer
   } else {
-    isTimerPaused = false; // restart the timer
-    startTime += Date.now() - (startTime + elapsedTime * 1000); // adjust start time
+      isTimerPaused = false; // restart the timer
+      startTime += Date.now() - (startTime + elapsedTime * 1000); // adjust start time
   }
 }
 
@@ -482,9 +484,9 @@ resetButton.addEventListener("click", () => {
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {
-  if (isPaused) {
-    requestAnimationFrame(gameLoop);
-    return; // Stop further updates
+  if (isPaused || !mainMenu.classList.contains("hidden")) {
+      requestAnimationFrame(gameLoop);
+      return; // Stop further updates
   }
 
   movePacman();
@@ -497,13 +499,80 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
 }
 
+const mainMenu = document.getElementById("main-menu");
+const playButton = document.getElementById("play-button");
+
+// Function to show the main menu
+function showMainMenu() {
+    mainMenu.classList.remove("hidden");
+    pauseMenu.classList.add("hidden");
+    isPaused = true;
+}
+
+// Function to start the game
+function startGame() {
+    mainMenu.classList.add("hidden");
+    resetGame();
+    isPaused = false;
+    startGameTimer();
+    gameLoop();
+}
+
+// Event listener for the "Play Game" button
+playButton.addEventListener("click", startGame);
+
+// Modify the resetGame function to show the main menu when the game is over
+function resetGame() {
+    score = 0;
+    updateScore(score);
+    grid = generateMaze(20); // Generate a new maze
+    drawGrid(); // Redraw the grid
+    initializeEnemies();
+    pacman.x = 1;
+    pacman.y = 1;
+    pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
+    drawGrid(); // Redraw the grid
+    isPaused = false; // Unpause the game
+
+    // Reset lives
+    lives = 3;
+    updateLives();
+
+    // Reset Timer Properly
+    elapsedTime = 0;
+    document.getElementById("timer").textContent = "Time: 0s";
+    startGameTimer(); // Restart the timer correctly
+}
+
+// Modify the handleEnemyCollision function to show the main menu when the player loses
+function handleEnemyCollision() {
+    if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
+
+    lives--; // Lose a life
+    updateLives();
+
+    if (lives <= 0) {
+        alert("Game Over! Returning to main menu.");
+        showMainMenu();
+    } else {
+        // Make Pac-Man invulnerable for 5 seconds
+        isInvulnerable = true;
+        invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
+    }
+}
+
+// Show the main menu when the page loads
+document.addEventListener("DOMContentLoaded", () => {
+    showMainMenu();
+});
+
 
 // Listen for arrow key presses
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape") {
+  if (event.key === "Escape" && mainMenu.classList.contains("hidden")) {
       pauseGame(); // Toggle pause menu
-  } else if (!isPaused) {
-      // Only allow movement if the game is not paused
+  } else if (!isPaused && mainMenu.classList.contains("hidden")) {
+      // Only allow movement if the game is not paused and main menu is hidden
       if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
       if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
       if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
@@ -525,7 +594,10 @@ document.addEventListener("DOMContentLoaded", () => {
       });
   };
 
-  playMusic(); // Attempt to play on page load
+  // Start music when the game starts
+  playButton.addEventListener("click", () => {
+      playMusic();
+  });
 
   // If autoplay is blocked, start music on first user interaction
   document.addEventListener("click", () => {

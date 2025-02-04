@@ -2,6 +2,7 @@ const gridElement = document.getElementById("grid");
 const pauseMenu = document.getElementById("pause-menu");
 const continueButton = document.getElementById("continue-button");
 const resetButton = document.getElementById("reset-button");
+let backgroundMusic;
 
 function generateMaze(size) {
   // Create a grid filled with walls (1)
@@ -460,15 +461,18 @@ function reconstructPath(cameFrom, current) {
 let isPaused = false;
 
 function pauseGame() {
-  if (!mainMenu.classList.contains("hidden")) return;
-  
-  isPaused = !isPaused;
-  pauseMenu.classList.toggle("hidden", !isPaused);
-  isTimerPaused = isPaused;
-  
-  if (!isPaused) {
-      // Adjust start time to account for pause duration
-      startTime += Date.now() - (startTime + elapsedTime * 1000);
+  if (!mainMenu.classList.contains("hidden")) return; // Do not pause if main menu is shown
+
+  isPaused = !isPaused; // Toggle pause
+  pauseMenu.classList.toggle("hidden", !isPaused); // Show/hide pause menu
+
+  if (isPaused) {
+      backgroundMusic.pause(); // Pause music
+      isTimerPaused = true; // Pause the timer
+  } else {
+      backgroundMusic.play(); // Resume music
+      isTimerPaused = false; // Restart the timer
+      startTime += Date.now() - (startTime + elapsedTime * 1000); // Adjust start time
   }
 }
 
@@ -509,6 +513,10 @@ function showMainMenu() {
       el.classList.add("hidden");
   });
   isPaused = true;
+
+  // Stop music
+  backgroundMusic.pause();
+  backgroundMusic.currentTime = 0; // Reset music to the beginning
 }
 
 // Function to start the game
@@ -520,6 +528,12 @@ function startGame() {
   });
   resetGame();
   isPaused = false;
+
+  // Start music
+  backgroundMusic.play().catch(() => {
+      console.log("Autoplay blocked. Music will start on user interaction.");
+  });
+
   startGameTimer();
   gameLoop();
 }
@@ -529,43 +543,48 @@ playButton.addEventListener("click", startGame);
 
 // Modify the resetGame function to show the main menu when the game is over
 function resetGame() {
-    score = 0;
-    updateScore(score);
-    grid = generateMaze(20); // Generate a new maze
-    drawGrid(); // Redraw the grid
-    initializeEnemies();
-    pacman.x = 1;
-    pacman.y = 1;
-    pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
-    drawGrid(); // Redraw the grid
-    isPaused = false; // Unpause the game
-    clearInterval(timerInterval);
-    elapsedTime = 0;
-    document.getElementById("timer").textContent = "Time: 0s";
+  score = 0;
+  updateScore(score);
+  grid = generateMaze(20); // Generate a new maze
+  drawGrid(); // Redraw the grid
+  initializeEnemies();
+  pacman.x = 1;
+  pacman.y = 1;
+  pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
+  drawGrid(); // Redraw the grid
+  isPaused = false; // Unpause the game
 
-    // Reset lives
-    lives = 3;
-    updateLives();
+  // Reset lives
+  lives = 3;
+  updateLives();
 
-    // Reset Timer Properly
-    elapsedTime = 0;
-    document.getElementById("timer").textContent = "Time: 0s";
-    startGameTimer(); // Restart the timer correctly
+  // Reset Timer Properly
+  clearInterval(timerInterval);
+  elapsedTime = 0;
+  document.getElementById("timer").textContent = "Time: 0s";
+
+  // Ensure music is playing
+  if (backgroundMusic.paused) {
+      backgroundMusic.play().catch(() => {
+          console.log("Autoplay blocked. Music will start on user interaction.");
+      });
+  }
 }
 
 // Modify the handleEnemyCollision function to show the main menu when the player loses
 function handleEnemyCollision() {
-  if (isInvulnerable) return;
+  if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
 
-  lives--;
+  lives--; // Lose a life
   updateLives();
 
   if (lives <= 0) {
-      showMainMenu();
-      clearInterval(timerInterval);  // Stop timer
+      alert("Game Over! Returning to main menu.");
+      showMainMenu(); // This will stop the music
   } else {
+      // Make Pac-Man invulnerable for 5 seconds
       isInvulnerable = true;
-      invulnerabilityEndTime = Date.now() + 5000;
+      invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
   }
 }
 
@@ -589,28 +608,22 @@ document.addEventListener("keydown", (event) => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  const backgroundMusic = new Audio("./audio/Hunting for your Dream  Hunter x Hunter Ending 2 Creditless.mp3");
+  backgroundMusic = new Audio("./audio/Hunting for your Dream  Hunter x Hunter Ending 2 Creditless.mp3");
   backgroundMusic.loop = true;
   backgroundMusic.volume = 0.1; // Adjust volume as needed
 
-  // Try to autoplay
-  const playMusic = () => {
-      backgroundMusic.play().then(() => {
-          console.log("Music playing!");
-      }).catch(() => {
-          console.log("Autoplay blocked. Waiting for user interaction.");
-      });
-  };
-
   // Start music when the game starts
   playButton.addEventListener("click", () => {
-      playMusic();
+      backgroundMusic.play().catch(() => {
+          console.log("Autoplay blocked. Music will start on user interaction.");
+      });
   });
 
   // If autoplay is blocked, start music on first user interaction
   document.addEventListener("click", () => {
+      if (!backgroundMusic.paused) return; // Don't restart if already playing
       backgroundMusic.play();
-  }, { once: true }); // Ensures this event runs only once
+  }, { once: true });
 });
 
 

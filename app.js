@@ -147,8 +147,6 @@ function startGameTimer() {
   timerInterval = setInterval(updateTimer, 1000);
 }
 
-
-
 // Function to handle Pac-Man being hit by an enemy
 function handleEnemyCollision() {
   if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
@@ -511,6 +509,28 @@ document.addEventListener("keydown", (event) => {
       if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
       if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
   }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+  const backgroundMusic = new Audio("./audio/Hunting for your Dream  Hunter x Hunter Ending 2 Creditless.mp3");
+  backgroundMusic.loop = true;
+  backgroundMusic.volume = 0.1; // Adjust volume as needed
+
+  // Try to autoplay
+  const playMusic = () => {
+      backgroundMusic.play().then(() => {
+          console.log("Music playing!");
+      }).catch(() => {
+          console.log("Autoplay blocked. Waiting for user interaction.");
+      });
+  };
+
+  playMusic(); // Attempt to play on page load
+
+  // If autoplay is blocked, start music on first user interaction
+  document.addEventListener("click", () => {
+      backgroundMusic.play();
+  }, { once: true }); // Ensures this event runs only once
 });
 
 

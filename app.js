@@ -135,16 +135,15 @@ let timerInterval;
 let isTimerPaused = false;
 
 function updateTimer() {
-  if (isTimerPaused) return;
-  elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Convertir en secondes
+  elapsedTime = Math.floor((Date.now() - startTime) / 1000);
   document.getElementById("timer").textContent = `Time: ${elapsedTime}s`;
 }
 
 function startGameTimer() {
-  elapsedTime = 0;  // Reset elapsed time
-  document.getElementById("timer").textContent = `Time: 0s`; // Update display
-  startTime = Date.now(); // Reset start time
-  clearInterval(timerInterval); // Clear any existing timer
+  elapsedTime = 0;
+  document.getElementById("timer").textContent = `Time: 0s`;
+  startTime = Date.now();
+  clearInterval(timerInterval);
   timerInterval = setInterval(updateTimer, 1000);
 }
 
@@ -469,10 +468,12 @@ function pauseGame() {
   if (isPaused) {
       backgroundMusic.pause(); // Pause music
       isTimerPaused = true; // Pause the timer
+      clearInterval(timerInterval); // Stop the timer
   } else {
       backgroundMusic.play(); // Resume music
       isTimerPaused = false; // Restart the timer
       startTime += Date.now() - (startTime + elapsedTime * 1000); // Adjust start time
+      startGameTimer(); // Restart the timer
   }
 }
 
@@ -546,14 +547,14 @@ playButton.addEventListener("click", startGame);
 function resetGame() {
   score = 0;
   updateScore(score);
-  grid = generateMaze(20); // Generate a new maze
-  drawGrid(); // Redraw the grid
+  grid = generateMaze(20);
+  drawGrid();
   initializeEnemies();
   pacman.x = 1;
   pacman.y = 1;
-  pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
-  drawGrid(); // Redraw the grid
-  isPaused = false; // Unpause the game
+  pacmanDirection = { dx: 0, dy: 0 };
+  drawGrid();
+  isPaused = false;
 
   // Reset lives
   lives = 3;
@@ -574,14 +575,14 @@ function resetGame() {
 
 // Modify the handleEnemyCollision function to show the main menu when the player loses
 function handleEnemyCollision() {
-  if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
+  if (isInvulnerable) return;
 
-  lives--; // Lose a life
+  lives--;
   updateLives();
 
   if (lives <= 0) {
       alert("Game Over! Returning to main menu.");
-      showMainMenu(); // This will stop the music
+      showMainMenu();
   } else {
       // Make Pac-Man invulnerable for 5 seconds
       isInvulnerable = true;
@@ -598,8 +599,8 @@ document.addEventListener("DOMContentLoaded", () => {
 // Listen for arrow key presses
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && mainMenu.classList.contains("hidden")) {
-      pauseGame(); // Toggle pause menu
-  } else if (!isPaused && mainMenu.classList.contains("hidden")) {
+    pauseGame(); // Toggle pause menu
+} else if (!isPaused && mainMenu.classList.contains("hidden")) {
       // Only allow movement if the game is not paused and main menu is hidden
       if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
       if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
@@ -611,14 +612,14 @@ document.addEventListener("keydown", (event) => {
 document.addEventListener("DOMContentLoaded", () => {
   backgroundMusic = new Audio("./audio/Hunting for your Dream  Hunter x Hunter Ending 2 Creditless.mp3");
   backgroundMusic.loop = true;
-  backgroundMusic.volume = 0.1; // Adjust volume as needed
+  backgroundMusic.volume = 0.2; // Adjust volume as needed
 
   // Start music when the game starts
   playButton.addEventListener("click", () => {
       backgroundMusic.play().catch(() => {
           console.log("Autoplay blocked. Music will start on user interaction.");
       });
-  });
+  }); 
 
   // If autoplay is blocked, start music on first user interaction
   document.addEventListener("click", () => {

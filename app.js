@@ -481,9 +481,10 @@ continueButton.addEventListener("click", () => {
 });
 
 resetButton.addEventListener("click", () => {
-  resetGame(); // Reset the game
-  pauseGame(); // Hide the pause menu
+  showMainMenu(); // Return to main menu
+  pauseMenu.classList.toggle("hidden"); // Show/hide pause menu
 });
+
 
 // Game loop to run with requestAnimationFrame
 function gameLoop() {

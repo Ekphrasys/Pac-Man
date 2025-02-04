@@ -127,6 +127,25 @@ function updateLives() {
   livesElement.textContent = `Lives: ${lives}`;
 }
 
+let startTime = Date.now();
+let elapsedTime = 0;
+let timerInterval;
+
+let isTimerPaused = false;
+
+function updateTimer() {
+  if (isTimerPaused) return;
+  elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Convertir en secondes
+  document.getElementById("timer").textContent = `Time: ${elapsedTime}s`;
+}
+
+function startGameTimer() {
+  startTime = Date.now();
+  clearInterval(timerInterval); // Évite les doublons si on reset
+  timerInterval = setInterval(updateTimer, 1000);
+}
+
+
 // Function to handle Pac-Man being hit by an enemy
 function handleEnemyCollision() {
   if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
@@ -198,11 +217,6 @@ function updateFPS() {
   }
 }
 
-
-// 0 = path
-// 1 = wall
-// 2 = dot
-
 // Pac-Man position
 let pacman = { x: 1, y: 1 };
 let grid = generateMaze(20)
@@ -213,7 +227,7 @@ function initializeEnemies() {
     { x: 11, y: 11 },
     { x: 10, y: 10 },
     { x: 9, y: 11 },
-    { x: 10, y: 10 },
+    { x: 10, y: 11 },
   ];
 }
 
@@ -304,6 +318,7 @@ function resetGame() {
   pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
   drawGrid(); // Redraw the grid
   isPaused = false; // Unpause the game
+  startGameTimer()
 }
 
 function nextLevel() {
@@ -312,6 +327,7 @@ function nextLevel() {
   pacman.x = 1
   pacman.y = 1
   initializeEnemies()
+  startGameTimer()
 }
 
 // Function to move Pacman
@@ -436,6 +452,13 @@ let isPaused = false;
 function pauseGame() {
   isPaused = !isPaused; // Toggle pause
   pauseMenu.classList.toggle("hidden", !isPaused); // Show/hide pause menu
+
+  if (isPaused) {
+    isTimerPaused = true; // pause the timer
+  } else {
+    isTimerPaused = false; // restart the timer
+    startTime += Date.now() - (startTime + elapsedTime * 1000); // adjust start time
+  }
 }
 
 continueButton.addEventListener("click", () => {
@@ -483,4 +506,5 @@ document.addEventListener("keydown", (event) => {
 updateLives();
 drawGrid();
 initializeEnemies();
+startGameTimer();
 gameLoop();

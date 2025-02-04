@@ -233,3 +233,7 @@ body {
 #main-menu button:hover {
   background-color: orange;
 }
+
+.grid.hidden {
+  visibility: hidden;
+}

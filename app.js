@@ -460,16 +460,15 @@ function reconstructPath(cameFrom, current) {
 let isPaused = false;
 
 function pauseGame() {
-  if (!mainMenu.classList.contains("hidden")) return; // Do not pause if main menu is shown
-
-  isPaused = !isPaused; // Toggle pause
-  pauseMenu.classList.toggle("hidden", !isPaused); // Show/hide pause menu
-
-  if (isPaused) {
-      isTimerPaused = true; // pause the timer
-  } else {
-      isTimerPaused = false; // restart the timer
-      startTime += Date.now() - (startTime + elapsedTime * 1000); // adjust start time
+  if (!mainMenu.classList.contains("hidden")) return;
+  
+  isPaused = !isPaused;
+  pauseMenu.classList.toggle("hidden", !isPaused);
+  isTimerPaused = isPaused;
+  
+  if (!isPaused) {
+      // Adjust start time to account for pause duration
+      startTime += Date.now() - (startTime + elapsedTime * 1000);
   }
 }
 
@@ -504,18 +503,25 @@ const playButton = document.getElementById("play-button");
 
 // Function to show the main menu
 function showMainMenu() {
-    mainMenu.classList.remove("hidden");
-    pauseMenu.classList.add("hidden");
-    isPaused = true;
+  mainMenu.classList.remove("hidden");
+  // Hide game UI elements
+  document.querySelectorAll('#scoreboard, #fps-counter, #lives, #timer, #grid').forEach(el => {
+      el.classList.add("hidden");
+  });
+  isPaused = true;
 }
 
 // Function to start the game
 function startGame() {
-    mainMenu.classList.add("hidden");
-    resetGame();
-    isPaused = false;
-    startGameTimer();
-    gameLoop();
+  mainMenu.classList.add("hidden");
+  // Show game UI elements
+  document.querySelectorAll('#scoreboard, #fps-counter, #lives, #timer, #grid').forEach(el => {
+      el.classList.remove("hidden");
+  });
+  resetGame();
+  isPaused = false;
+  startGameTimer();
+  gameLoop();
 }
 
 // Event listener for the "Play Game" button
@@ -533,6 +539,9 @@ function resetGame() {
     pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
     drawGrid(); // Redraw the grid
     isPaused = false; // Unpause the game
+    clearInterval(timerInterval);
+    elapsedTime = 0;
+    document.getElementById("timer").textContent = "Time: 0s";
 
     // Reset lives
     lives = 3;
@@ -546,19 +555,18 @@ function resetGame() {
 
 // Modify the handleEnemyCollision function to show the main menu when the player loses
 function handleEnemyCollision() {
-    if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
+  if (isInvulnerable) return;
 
-    lives--; // Lose a life
-    updateLives();
+  lives--;
+  updateLives();
 
-    if (lives <= 0) {
-        alert("Game Over! Returning to main menu.");
-        showMainMenu();
-    } else {
-        // Make Pac-Man invulnerable for 5 seconds
-        isInvulnerable = true;
-        invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
-    }
+  if (lives <= 0) {
+      showMainMenu();
+      clearInterval(timerInterval);  // Stop timer
+  } else {
+      isInvulnerable = true;
+      invulnerabilityEndTime = Date.now() + 5000;
+  }
 }
 
 // Show the main menu when the page loads

@@ -140,10 +140,13 @@ function updateTimer() {
 }
 
 function startGameTimer() {
-  startTime = Date.now();
-  clearInterval(timerInterval); // Évite les doublons si on reset
+  elapsedTime = 0;  // Reset elapsed time
+  document.getElementById("timer").textContent = `Time: 0s`; // Update display
+  startTime = Date.now(); // Reset start time
+  clearInterval(timerInterval); // Clear any existing timer
   timerInterval = setInterval(updateTimer, 1000);
 }
+
 
 
 // Function to handle Pac-Man being hit by an enemy
@@ -308,8 +311,8 @@ function allDotsEaten() {
 
 // Function to generate a new maze
 function resetGame() {
-  score = 0
-  updateScore(score)
+  score = 0;
+  updateScore(score);
   grid = generateMaze(20); // Generate a new maze
   drawGrid(); // Redraw the grid
   initializeEnemies();
@@ -318,8 +321,17 @@ function resetGame() {
   pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
   drawGrid(); // Redraw the grid
   isPaused = false; // Unpause the game
-  startGameTimer()
+
+  // Reset lives
+  lives = 3;
+  updateLives();
+
+  // Reset Timer Properly
+  elapsedTime = 0;
+  document.getElementById("timer").textContent = `Time: 0s`;
+  startGameTimer(); // Restart the timer correctly
 }
+
 
 function nextLevel() {
   grid = generateMaze(20);

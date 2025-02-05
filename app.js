@@ -307,29 +307,6 @@ function allDotsEaten() {
   return grid.every(row => row.every(cell => cell !== 2)); // Check if there are no dots left
 }
 
-// Function to generate a new maze
-function resetGame() {
-  score = 0;
-  updateScore(score);
-  grid = generateMaze(20); // Generate a new maze
-  drawGrid(); // Redraw the grid
-  initializeEnemies();
-  pacman.x = 1;
-  pacman.y = 1;
-  pacmanDirection = { dx: 0, dy: 0 }; // Stop Pac-Man's movement
-  drawGrid(); // Redraw the grid
-  isPaused = false; // Unpause the game
-
-  // Reset lives
-  lives = 3;
-  updateLives();
-
-  // Reset Timer Properly
-  elapsedTime = 0;
-  document.getElementById("timer").textContent = `Time: 0s`;
-  startGameTimer(); // Restart the timer correctly
-}
-
 
 function nextLevel() {
   grid = generateMaze(20);

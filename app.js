@@ -120,6 +120,7 @@ function generateMaze(size) {
 
 let lives = 3;
 let isInvulnerable = false;
+let isInvincible = false;
 let invulnerabilityEndTime = 0;
 
 // Function to update lives
@@ -151,7 +152,7 @@ function startGameTimer() {
 function checkCollisions() {
   enemies.forEach(enemy => {
     if (pacman.x === enemy.x && pacman.y === enemy.y) {
-      if (isInvulnerable) {
+      if (isInvincible) {
 
         // Define the T-shape start zone coordinates
         const tShapeStartZone = [
@@ -174,6 +175,10 @@ function checkCollisions() {
 function updateInvulnerability() {
   if (isInvulnerable && Date.now() >= invulnerabilityEndTime) {
     isInvulnerable = false; // End invulnerability
+  }
+
+  if (isInvincible && Date.now() >= invulnerabilityEndTime) {
+    isInvincible = false; // End invulnerability
   }
 }
 
@@ -337,7 +342,7 @@ function movePacman() {
       grid[newY][newX] = 0; // Mark power-up as eaten
       updateScore(50); // Power-up gives 50 points
       // Make pacman invulnerable
-      isInvulnerable = true;
+      isInvincible = true;
       invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
 
     }

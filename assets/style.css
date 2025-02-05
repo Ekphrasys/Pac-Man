@@ -107,6 +107,24 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
   }
+
+  .power-up{
+    background-color: black;
+    position: relative;
+  }
+
+  .power-up::after {
+    content: '';
+    width: 14px;
+    height: 14px;
+    background-color: rgb(245, 180, 17);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 50%;
+  }
+
   .pacman {
     background-color: yellow;
     border-radius: 50%;

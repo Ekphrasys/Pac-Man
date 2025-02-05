@@ -105,7 +105,7 @@ function generateMaze(size) {
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       if (grid[y][x] === 0 && !tShape.some(([ty, tx]) => ty === y && tx === x) && visited[y][x]) {
-        grid[y][x] = 2; // Place dot only in accessible areas
+        grid[y][x] = Math.random() < 0.05 ? 3 : 2; // Place dot only in accessible areas
       }
     }
   }
@@ -151,7 +151,21 @@ function startGameTimer() {
 function checkCollisions() {
   enemies.forEach(enemy => {
     if (pacman.x === enemy.x && pacman.y === enemy.y) {
-      handleEnemyCollision();
+      if (isInvulnerable) {
+
+        // Define the T-shape start zone coordinates
+        const tShapeStartZone = [
+          { x: 9, y: 10 }, { x: 10, y: 10 }, { x: 11, y: 10 }
+        ];
+
+        // Reset enemy position within the T-shape start zone
+        const randomPosition = tShapeStartZone[Math.floor(Math.random() * tShapeStartZone.length)];
+        enemy.x = randomPosition.x;
+        enemy.y = randomPosition.y;
+        updateScore(100); // Add points for eating a ghost
+      } else {
+        handleEnemyCollision();
+      }
     }
   });
 }
@@ -248,6 +262,8 @@ function drawGrid() {
         cell.classList.add("wall", getWallClass(x, y));
       } else if (grid[y][x] === 2) {
         cell.classList.add("point");
+      } else if (grid[y][x] === 3) {
+        cell.classList.add("power-up");
       } else {
         cell.classList.add("path");
       }
@@ -317,6 +333,13 @@ function movePacman() {
     if (grid[newY][newX] === 2) {
       grid[newY][newX] = 0; // Mark dot as eaten
       updateScore(10); // Each dot gives 10 points
+    } else if (grid[newY][newX] === 3) {
+      grid[newY][newX] = 0; // Mark power-up as eaten
+      updateScore(50); // Power-up gives 50 points
+      // Make pacman invulnerable
+      isInvulnerable = true;
+      invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
+
     }
 
     // Check if all dots are eaten and start new level
@@ -345,7 +368,7 @@ function moveEnemies() {
       const nextCell = path[1];
 
       // Check if the next cell is not occupied by another enemy
-      const isCellOccupied = enemies.some(otherEnemy => 
+      const isCellOccupied = enemies.some(otherEnemy =>
         otherEnemy.x === nextCell.x && otherEnemy.y === nextCell.y
       );
 
@@ -424,14 +447,14 @@ function pauseGame() {
   pauseMenu.classList.toggle("hidden", !isPaused); // Show/hide pause menu
 
   if (isPaused) {
-      backgroundMusic.pause(); // Pause music
-      isTimerPaused = true; // Pause the timer
-      clearInterval(timerInterval); // Stop the timer
+    backgroundMusic.pause(); // Pause music
+    isTimerPaused = true; // Pause the timer
+    clearInterval(timerInterval); // Stop the timer
   } else {
-      backgroundMusic.play(); // Resume music
-      isTimerPaused = false; // Restart the timer
-      startTime += Date.now() - (startTime + elapsedTime * 1000); // Adjust start time
-      startGameTimer(); // Restart the timer
+    backgroundMusic.play(); // Resume music
+    isTimerPaused = false; // Restart the timer
+    startTime += Date.now() - (startTime + elapsedTime * 1000); // Adjust start time
+    startGameTimer(); // Restart the timer
   }
 }
 
@@ -448,8 +471,8 @@ resetButton.addEventListener("click", () => {
 // Game loop to run with requestAnimationFrame
 function gameLoop() {
   if (isPaused || !mainMenu.classList.contains("hidden")) {
-      requestAnimationFrame(gameLoop);
-      return; // Stop further updates
+    requestAnimationFrame(gameLoop);
+    return; // Stop further updates
   }
 
   movePacman();
@@ -470,7 +493,7 @@ function showMainMenu() {
   mainMenu.classList.remove("hidden");
   // Hide game UI elements
   document.querySelectorAll('#scoreboard, #fps-counter, #lives, #timer, #grid').forEach(el => {
-      el.classList.add("hidden");
+    el.classList.add("hidden");
   });
   isPaused = true;
 
@@ -484,14 +507,14 @@ function startGame() {
   mainMenu.classList.add("hidden");
   // Show game UI elements
   document.querySelectorAll('#scoreboard, #fps-counter, #lives, #timer, #grid').forEach(el => {
-      el.classList.remove("hidden");
+    el.classList.remove("hidden");
   });
   resetGame();
   isPaused = false;
 
   // Start music
   backgroundMusic.play().catch(() => {
-      console.log("Autoplay blocked. Music will start on user interaction.");
+    console.log("Autoplay blocked. Music will start on user interaction.");
   });
 
   startGameTimer();
@@ -525,9 +548,9 @@ function resetGame() {
 
   // Ensure music is playing
   if (backgroundMusic.paused) {
-      backgroundMusic.play().catch(() => {
-          console.log("Autoplay blocked. Music will start on user interaction.");
-      });
+    backgroundMusic.play().catch(() => {
+      console.log("Autoplay blocked. Music will start on user interaction.");
+    });
   }
 }
 
@@ -539,18 +562,18 @@ function handleEnemyCollision() {
   updateLives();
 
   if (lives <= 0) {
-      alert("Game Over! Returning to main menu.");
-      showMainMenu();
+    alert("Game Over! Returning to main menu.");
+    showMainMenu();
   } else {
-      // Make Pac-Man invulnerable for 5 seconds
-      isInvulnerable = true;
-      invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
+    // Make Pac-Man invulnerable for 5 seconds
+    isInvulnerable = true;
+    invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
   }
 }
 
 // Show the main menu when the page loads
 document.addEventListener("DOMContentLoaded", () => {
-    showMainMenu();
+  showMainMenu();
 });
 
 
@@ -558,12 +581,12 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && mainMenu.classList.contains("hidden")) {
     pauseGame(); // Toggle pause menu
-} else if (!isPaused && mainMenu.classList.contains("hidden")) {
-      // Only allow movement if the game is not paused and main menu is hidden
-      if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
-      if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
-      if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
-      if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
+  } else if (!isPaused && mainMenu.classList.contains("hidden")) {
+    // Only allow movement if the game is not paused and main menu is hidden
+    if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
+    if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
+    if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
+    if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
   }
 });
 
@@ -574,15 +597,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Start music when the game starts
   playButton.addEventListener("click", () => {
-      backgroundMusic.play().catch(() => {
-          console.log("Autoplay blocked. Music will start on user interaction.");
-      });
-  }); 
+    backgroundMusic.play().catch(() => {
+      console.log("Autoplay blocked. Music will start on user interaction.");
+    });
+  });
 
   // If autoplay is blocked, start music on first user interaction
   document.addEventListener("click", () => {
-      if (!backgroundMusic.paused) return; // Don't restart if already playing
-      backgroundMusic.play();
+    if (!backgroundMusic.paused) return; // Don't restart if already playing
+    backgroundMusic.play();
   }, { once: true });
 });
 

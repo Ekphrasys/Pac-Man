@@ -147,25 +147,6 @@ function startGameTimer() {
   timerInterval = setInterval(updateTimer, 1000);
 }
 
-// Function to handle Pac-Man being hit by an enemy
-function handleEnemyCollision() {
-  if (isInvulnerable) return; // Ignore collision if Pac-Man is invulnerable
-
-  lives--; // Lose a life
-  updateLives();
-
-  if (lives <= 0) {
-    alert("Game Over! Resetting game.");
-    resetGame();
-    lives = 3; // Reset lives
-    updateLives();
-  } else {
-    // Make Pac-Man invulnerable for 5 seconds
-    isInvulnerable = true;
-    invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
-  }
-}
-
 // Function to check for collisions between Pac-Man and enemies
 function checkCollisions() {
   enemies.forEach(enemy => {

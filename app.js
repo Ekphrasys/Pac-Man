@@ -3,8 +3,7 @@ const pauseMenu = document.getElementById("pause-menu");
 const continueButton = document.getElementById("continue-button");
 const resetButton = document.getElementById("reset-button");
 let backgroundMusic;
-const moveSound = new Audio("./audio/PacmanWakaWaka04.mp3");
-moveSound.volume = 0.1;
+let moveSound;
 let pacmanDeath;
 
 function generateMaze(size) {
@@ -186,6 +185,10 @@ function updateInvulnerability() {
   }
 }
 
+let pacmanFrame = 1; // Current frame of Pac-Man's animation
+let lastFrameUpdate = 0; // Timestamp of the last frame update
+const frameDelay = 100;
+
 function drawPacMan(cell) {
   if (isInvulnerable) {
     // Flash Pac-Man by toggling visibility every 200ms
@@ -196,6 +199,32 @@ function drawPacMan(cell) {
     }
   } else {
     cell.classList.add("pacman");
+  }
+
+  // Remove any existing direction classes
+  cell.classList.remove(
+    "pacman-up-1", "pacman-up-2", "pacman-up-3",
+    "pacman-down-1", "pacman-down-2", "pacman-down-3",
+    "pacman-left-1", "pacman-left-2", "pacman-left-3",
+    "pacman-right-1", "pacman-right-2", "pacman-right-3"
+  );
+
+  // Update the frame counter
+  const currentTime = Date.now();
+  if (currentTime - lastFrameUpdate > frameDelay) {
+    pacmanFrame = (pacmanFrame % 3) + 1; // Cycle through frames 1, 2, 3
+    lastFrameUpdate = currentTime;
+  }
+
+  // Add the appropriate direction class based on pacmanDirection
+  if (pacmanDirection.dy === -1) {
+    cell.classList.add(`pacman-up-${pacmanFrame}`);
+  } else if (pacmanDirection.dy === 1) {
+    cell.classList.add(`pacman-down-${pacmanFrame}`);
+  } else if (pacmanDirection.dx === -1) {
+    cell.classList.add(`pacman-left-${pacmanFrame}`);
+  } else if (pacmanDirection.dx === 1) {
+    cell.classList.add(`pacman-right-${pacmanFrame}`);
   }
 }
 
@@ -511,7 +540,7 @@ function gameLoop() {
   moveEnemies();
   checkCollisions();
   updateInvulnerability();
-  drawGrid();
+  drawGrid(); // This will call drawPacMan
   updateFPS();
 
   requestAnimationFrame(gameLoop);
@@ -621,10 +650,22 @@ document.addEventListener("keydown", (event) => {
     pauseGame(); // Toggle pause menu
   } else if (!isPaused && mainMenu.classList.contains("hidden")) {
     // Only allow movement if the game is not paused and main menu is hidden
-    if (event.key === "ArrowUp") pacmanDirection = { dx: 0, dy: -1 };
-    if (event.key === "ArrowDown") pacmanDirection = { dx: 0, dy: 1 };
-    if (event.key === "ArrowLeft") pacmanDirection = { dx: -1, dy: 0 };
-    if (event.key === "ArrowRight") pacmanDirection = { dx: 1, dy: 0 };
+    if (event.key === "ArrowUp") {
+      pacmanDirection = { dx: 0, dy: -1 };
+      pacmanFrame = 1; // Reset frame counter
+    }
+    if (event.key === "ArrowDown") {
+      pacmanDirection = { dx: 0, dy: 1 };
+      pacmanFrame = 1; // Reset frame counter
+    }
+    if (event.key === "ArrowLeft") {
+      pacmanDirection = { dx: -1, dy: 0 };
+      pacmanFrame = 1; // Reset frame counter
+    }
+    if (event.key === "ArrowRight") {
+      pacmanDirection = { dx: 1, dy: 0 };
+      pacmanFrame = 1; // Reset frame counter
+    }
   }
 });
 

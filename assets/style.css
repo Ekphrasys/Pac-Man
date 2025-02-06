@@ -139,6 +139,11 @@ body {
     border-radius: 50%;
   }
   
+  .enemy-blue {
+    background-color: rgb(0, 255, 229) !important;
+    border-radius: 50%;
+  }
+  
 
   #scoreboard {
     position: absolute;

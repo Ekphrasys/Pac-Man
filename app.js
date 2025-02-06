@@ -179,6 +179,7 @@ function updateInvulnerability() {
 
   if (isInvincible && Date.now() >= invulnerabilityEndTime) {
     isInvincible = false; // End invulnerability
+    drawGrid();
   }
 }
 
@@ -279,7 +280,11 @@ function drawGrid() {
 
       enemies.forEach((enemy, index) => {
         if (x === enemy.x && y === enemy.y) {
-          cell.classList.add(index % 2 === 0 ? "enemy-orange" : "enemy-red");
+          if (isInvincible) {
+            cell.classList.add("enemy-blue");
+          } else {
+            cell.classList.add(index % 2 === 0 ? "enemy-orange" : "enemy-red");
+          }
         }
       });
 
@@ -368,7 +373,15 @@ function moveEnemies() {
   lastEnemyMoveTime = currentTime;
 
   enemies.forEach(enemy => {
-    const path = findPath(enemy, pacman);
+    // const path = findPath(enemy, pacman);
+
+    let path;
+    if (isInvincible) {
+      path = fleePath(enemy, pacman)
+    } else {
+      path = findPath(enemy, pacman);
+    }
+
     if (path.length > 1) {
       const nextCell = path[1];
 
@@ -386,6 +399,17 @@ function moveEnemies() {
 
   drawGrid();
 }
+
+function fleePath(start, threat) {
+  const possiblePaths = getNeighbors(start);
+  
+  // Sort the paths based on the maximum distance from Pac-Man
+  possiblePaths.sort((a, b) => heuristic(b, threat) - heuristic(a, threat));
+
+  // Return the path that maximizes the distance from Pac-Man
+  return possiblePaths.length > 0 ? [start, possiblePaths[0]] : [start];
+}
+
 
 function findPath(start, goal) {
   const openSet = [start];

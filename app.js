@@ -3,6 +3,9 @@ const pauseMenu = document.getElementById("pause-menu");
 const continueButton = document.getElementById("continue-button");
 const resetButton = document.getElementById("reset-button");
 let backgroundMusic;
+const moveSound = new Audio("./audio/PacmanWakaWaka04.mp3");
+moveSound.volume = 0.1;
+let pacmanDeath;
 
 function generateMaze(size) {
   // Create a grid filled with walls (1)
@@ -588,11 +591,17 @@ function handleEnemyCollision() {
   if (isInvulnerable) return;
 
   lives--;
-  updateLives();
+  updateLives(); // Update the lives counter in the UI
 
   if (lives <= 0) {
-    alert("Game Over! Returning to main menu.");
-    showMainMenu();
+    // Ensure the UI is updated before showing the game over message
+    setTimeout(() => {
+      backgroundMusic.pause();
+      pacmanDeath = new Audio("./audio/PacmanDeath01a.mp3");
+      pacmanDeath.volume = 0.1;
+      pacmanDeath.play(); // Play the death sound effect
+      showMainMenu();
+    }, 0); // Use setTimeout to defer the game over logic until the next event loop tick
   } else {
     // Make Pac-Man invulnerable for 5 seconds
     isInvulnerable = true;

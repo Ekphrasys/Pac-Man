@@ -179,20 +179,64 @@ body {
   }
 
   .enemy-red {
-    background-color: red;
-    border-radius: 50%;
+    background-image: url('./img/enemies/red_left.png');
+    background-size: cover;
+  }
+
+  .enemy-red-top {
+    background-image: url('./img/enemies/red_top.png');
+    background-size: cover;
+  }
+
+  .enemy-red-left {
+    background-image: url('./img/enemies/red_left.png');
+    background-size: cover;
+  }
+
+  .enemy-red-right {
+    background-image: url('./img/enemies/red_right.png');
+    background-size: cover;
+  }
+
+  .enemy-red-bottom {
+    background-image: url('./img/enemies/red_bottom.png');
+    background-size: cover;
   }
   
   .enemy-orange {
-    background-color: orange;
-    border-radius: 50%;
+    background-image: url('./img/enemies/pink_left.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-top {
+    background-image: url('./img/enemies/pink_top.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-left {
+    background-image: url('./img/enemies/pink_left.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-right {
+    background-image: url('./img/enemies/pink_right.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-bottom {
+    background-image: url('./img/enemies/pink_bottom.png');
+    background-size: cover;
   }
   
   .enemy-blue {
-    background-color: rgb(0, 255, 229) !important;
-    border-radius: 50%;
+    background-image: url('./img/enemies/invincible_1.png');
+    background-size: cover;
   }
-  
+
+  .enemy-white {
+    background-image: url('./img/enemies/invincible_2.png');
+    background-size: cover;
+  }
 
   #scoreboard {
     position: absolute;

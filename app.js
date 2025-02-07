@@ -258,10 +258,10 @@ let enemies = [];
 
 function initializeEnemies() {
   enemies = [
-    { x: 11, y: 11 },
-    { x: 10, y: 10 },
-    { x: 9, y: 11 },
-    { x: 10, y: 11 },
+    { x: 11, y: 11, direction: 'left' },
+    { x: 10, y: 10, direction: 'right' },
+    { x: 9, y: 11, direction: 'up' },
+    { x: 10, y: 11, direction: 'down' },
   ];
 }
 
@@ -315,7 +315,30 @@ function drawGrid() {
           if (isInvincible) {
             cell.classList.add("enemy-blue");
           } else {
-            cell.classList.add(index % 2 === 0 ? "enemy-orange" : "enemy-red");
+            // Apply the appropriate class based on the enemy's direction
+            if (index % 2 === 0) {
+              // Red enemy
+              if (enemy.direction === 'up') {
+                cell.classList.add("enemy-red-top");
+              } else if (enemy.direction === 'down') {
+                cell.classList.add("enemy-red-bottom");
+              } else if (enemy.direction === 'left') {
+                cell.classList.add("enemy-red-left");
+              } else if (enemy.direction === 'right') {
+                cell.classList.add("enemy-red-right");
+              }
+            } else {
+              // Pink enemy
+              if (enemy.direction === 'up') {
+                cell.classList.add("enemy-orange-top");
+              } else if (enemy.direction === 'down') {
+                cell.classList.add("enemy-orange-bottom");
+              } else if (enemy.direction === 'left') {
+                cell.classList.add("enemy-orange-left");
+              } else if (enemy.direction === 'right') {
+                cell.classList.add("enemy-orange-right");
+              }
+            }
           }
         }
       });
@@ -405,11 +428,9 @@ function moveEnemies() {
   lastEnemyMoveTime = currentTime;
 
   enemies.forEach(enemy => {
-    // const path = findPath(enemy, pacman);
-
     let path;
     if (isInvincible) {
-      path = fleePath(enemy, pacman)
+      path = fleePath(enemy, pacman);
     } else {
       path = findPath(enemy, pacman);
     }
@@ -423,6 +444,17 @@ function moveEnemies() {
       );
 
       if (!isCellOccupied) {
+        // Update enemy direction based on movement
+        if (nextCell.x > enemy.x) {
+          enemy.direction = 'right';
+        } else if (nextCell.x < enemy.x) {
+          enemy.direction = 'left';
+        } else if (nextCell.y > enemy.y) {
+          enemy.direction = 'down';
+        } else if (nextCell.y < enemy.y) {
+          enemy.direction = 'up';
+        }
+
         enemy.x = nextCell.x;
         enemy.y = nextCell.y;
       }

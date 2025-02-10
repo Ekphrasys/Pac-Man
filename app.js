@@ -407,7 +407,7 @@ function movePacman() {
       updateScore(50); // Power-up gives 50 points
       // Make pacman invulnerable
       isInvincible = true;
-      invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
+      invulnerabilityEndTime = Date.now() + 8000; // 5 seconds from now
     }
 
     // Check if all dots are eaten and start new level

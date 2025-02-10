@@ -314,6 +314,10 @@ function drawGrid() {
         if (x === enemy.x && y === enemy.y) {
           if (isInvincible) {
             cell.classList.add("enemy-blue");
+            if (invulnerabilityEndTime <= Date.now() + 2000){
+              cell.classList.remove("enemy-blue");
+              cell.classList.add("enemy-white");
+            }
           } else {
             // Apply the appropriate class based on the enemy's direction
             if (index % 2 === 0) {

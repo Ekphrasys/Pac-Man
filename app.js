@@ -455,6 +455,24 @@ setInterval(() => {
   orangeEnemyMode = Math.random() < 0.3 ? "flee" : "find"; // 30% chance to switch mode
 }, 10000);
 
+function findClosestPowerUp(target) {
+  let closestPowerUp = null;
+  let minDistance = Infinity;
+
+  for (let y = 0; y < grid.length; y++) {
+    for (let x = 0; x < grid[y].length; x++) {
+      if (grid[y][x] === 3) { // Power-up cell
+        let distance = heuristic(target, { x, y }); // Calculate distance to Pac-Man
+        if (distance < minDistance) {
+          minDistance = distance;
+          closestPowerUp = { x, y };
+        }
+      }
+    }
+  }
+  return closestPowerUp;
+}
+
 function moveEnemies() {
   const currentTime = Date.now();
   if (currentTime - lastEnemyMoveTime < enemyMoveDelay) return;
@@ -477,7 +495,7 @@ function moveEnemies() {
         let pacmanPath = findPath(enemy, pacman); // Path toward Pac-Man
         let possibleMoves = getNeighbors(enemy); // Get available movement options
     
-        if (nearestRed && heuristic(enemy, nearestRed) < 4) { // Only avoid if a red enemy is very close
+        if (nearestRed && heuristic(enemy, nearestRed) < 5) { // Only avoid if a red enemy is very close
             possibleMoves = possibleMoves.filter(move => heuristic(move, nearestRed) > heuristic(enemy, nearestRed));
         }
     
@@ -493,7 +511,8 @@ function moveEnemies() {
     }else if (index % 4 === 2){
       path = orangeEnemyMode === "flee" ? fleePath(enemy, pacman) : findPath(enemy, pacman); // Orange switches modes
     }else if (index % 4 === 3){
-      path = findPath(enemy, pacman);
+      let closestPowerUp = findClosestPowerUp(pacman);
+      path = closestPowerUp ? findPath(enemy, closestPowerUp) : findPath(enemy, pacman); // Green goes to power-up or Pac-Man
     }
     
     }

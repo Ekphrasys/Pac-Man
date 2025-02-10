@@ -320,7 +320,7 @@ function drawGrid() {
             }
           } else {
             // Apply the appropriate class based on the enemy's direction
-            if (index % 2 === 0) {
+            if (index % 4 === 0) {
               // Red enemy
               if (enemy.direction === 'up') {
                 cell.classList.add("enemy-red-top");
@@ -331,7 +331,7 @@ function drawGrid() {
               } else if (enemy.direction === 'right') {
                 cell.classList.add("enemy-red-right");
               }
-            } else {
+            } else if(index % 4 === 1) {
               // Pink enemy
               if (enemy.direction === 'up') {
                 cell.classList.add("enemy-pink-top");
@@ -341,6 +341,28 @@ function drawGrid() {
                 cell.classList.add("enemy-pink-left");
               } else if (enemy.direction === 'right') {
                 cell.classList.add("enemy-pink-right");
+              }
+            }else if(index % 4 === 2) {
+              // Pink enemy
+              if (enemy.direction === 'up') {
+                cell.classList.add("enemy-orange-top");
+              } else if (enemy.direction === 'down') {
+                cell.classList.add("enemy-orange-bottom");
+              } else if (enemy.direction === 'left') {
+                cell.classList.add("enemy-orange-left");
+              } else if (enemy.direction === 'right') {
+                cell.classList.add("enemy-orange-right");
+              }
+            }else if(index % 4 === 3) {
+              // Pink enemy
+              if (enemy.direction === 'up') {
+                cell.classList.add("enemy-green-top");
+              } else if (enemy.direction === 'down') {
+                cell.classList.add("enemy-green-bottom");
+              } else if (enemy.direction === 'left') {
+                cell.classList.add("enemy-green-left");
+              } else if (enemy.direction === 'right') {
+                cell.classList.add("enemy-green-right");
               }
             }
           }
@@ -438,10 +460,10 @@ function moveEnemies() {
     if (isInvincible) {
       path = fleePath(enemy, pacman);
     } else {
-      if (index % 2 === 0) {
+      if (index % 4 === 0) {
         // Red enemies chase Pac-Man
         path = findPath(enemy, pacman);
-      } else {
+      } else  if (index % 4 === 1){
         // Pink enemies still chase Pac-Man, but avoid red enemies when possible
         let nearestRed = enemies.filter((e, i) => i % 2 === 0) // Get only red enemies
           .reduce((closest, red) => 
@@ -463,6 +485,10 @@ function moveEnemies() {
         } else {
             path = pacmanPath; // Default to chasing Pac-Man if no better option
         }
+    }else if (index % 4 === 2){
+      path = fleePath(enemy, pacman);
+    }else if (index % 4 === 3){
+      path = findPath(enemy, pacman);
     }
     
     }

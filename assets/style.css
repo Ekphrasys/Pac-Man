@@ -239,6 +239,46 @@ body {
     background-image: url('./img/enemies/pink_bottom.png');
     background-size: cover;
   }
+
+  .enemy-orange-top {
+    background-image: url('./img/enemies/orange_top.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-left {
+    background-image: url('./img/enemies/orange_left.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-right {
+    background-image: url('./img/enemies/orange_right.png');
+    background-size: cover;
+  }
+
+  .enemy-orange-bottom {
+    background-image: url('./img/enemies/orange_bottom.png');
+    background-size: cover;
+  }
+
+  .enemy-green-top {
+    background-image: url('./img/enemies/green_top.png');
+    background-size: cover;
+  }
+
+  .enemy-green-left {
+    background-image: url('./img/enemies/green_left.png');
+    background-size: cover;
+  }
+
+  .enemy-green-right {
+    background-image: url('./img/enemies/green_right.png');
+    background-size: cover;
+  }
+
+  .enemy-green-bottom {
+    background-image: url('./img/enemies/green_bottom.png');
+    background-size: cover;
+  }
   
   .enemy-blue {
     background-image: url('./img/enemies/invincible_1.png');

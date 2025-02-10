@@ -450,6 +450,11 @@ function movePacman() {
   drawGrid(); // Redraw the grid after moving
 }
 
+let orangeEnemyMode = "flee"; // Initial mode
+setInterval(() => {
+  orangeEnemyMode = Math.random() < 0.3 ? "flee" : "find"; // 30% chance to switch mode
+}, 10000);
+
 function moveEnemies() {
   const currentTime = Date.now();
   if (currentTime - lastEnemyMoveTime < enemyMoveDelay) return;
@@ -472,7 +477,7 @@ function moveEnemies() {
         let pacmanPath = findPath(enemy, pacman); // Path toward Pac-Man
         let possibleMoves = getNeighbors(enemy); // Get available movement options
     
-        if (nearestRed && heuristic(enemy, nearestRed) < 3) { // Only avoid if a red enemy is very close
+        if (nearestRed && heuristic(enemy, nearestRed) < 4) { // Only avoid if a red enemy is very close
             possibleMoves = possibleMoves.filter(move => heuristic(move, nearestRed) > heuristic(enemy, nearestRed));
         }
     
@@ -486,7 +491,7 @@ function moveEnemies() {
             path = pacmanPath; // Default to chasing Pac-Man if no better option
         }
     }else if (index % 4 === 2){
-      path = fleePath(enemy, pacman);
+      path = orangeEnemyMode === "flee" ? fleePath(enemy, pacman) : findPath(enemy, pacman); // Orange switches modes
     }else if (index % 4 === 3){
       path = findPath(enemy, pacman);
     }

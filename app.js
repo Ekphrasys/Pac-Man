@@ -358,7 +358,7 @@ let pacmanDirection = { dx: 0, dy: 0 }; // Stores Pac-Man's current direction
 let lastMoveTime = 0;
 const moveDelay = 250; // Controls movement speed (adjust if needed)
 let lastEnemyMoveTime = 0;
-const enemyMoveDelay = 600; // Adjust this value to change enemy speed
+const enemyMoveDelay = 350; // Adjust this value to change enemy speed
 let score = 0;
 const scoreboard = document.getElementById("scoreboard");
 
@@ -428,31 +428,52 @@ function movePacman() {
   drawGrid(); // Redraw the grid after moving
 }
 
-
-// Function to move enemies
 function moveEnemies() {
   const currentTime = Date.now();
   if (currentTime - lastEnemyMoveTime < enemyMoveDelay) return;
   lastEnemyMoveTime = currentTime;
 
-  enemies.forEach(enemy => {
+  enemies.forEach((enemy, index) => {
     let path;
     if (isInvincible) {
       path = fleePath(enemy, pacman);
     } else {
-      path = findPath(enemy, pacman);
+      if (index % 2 === 0) {
+        // Red enemies chase Pac-Man
+        path = findPath(enemy, pacman);
+      } else {
+        // Pink enemies still chase Pac-Man, but avoid red enemies when possible
+        let nearestRed = enemies.filter((e, i) => i % 2 === 0) // Get only red enemies
+          .reduce((closest, red) => 
+            (!closest || heuristic(enemy, red) < heuristic(enemy, closest)) ? red : closest, null);
+    
+        let pacmanPath = findPath(enemy, pacman); // Path toward Pac-Man
+        let possibleMoves = getNeighbors(enemy); // Get available movement options
+    
+        if (nearestRed && heuristic(enemy, nearestRed) < 4) { // Only avoid if a red enemy is very close
+            possibleMoves = possibleMoves.filter(move => heuristic(move, nearestRed) > heuristic(enemy, nearestRed));
+        }
+    
+        if (possibleMoves.length > 0) {
+            // Prefer path toward Pac-Man while avoiding red enemies
+            let bestMove = possibleMoves.reduce((best, move) => 
+                heuristic(move, pacman) < heuristic(best, pacman) ? move : best, possibleMoves[0]);
+            
+            path = [enemy, bestMove];
+        } else {
+            path = pacmanPath; // Default to chasing Pac-Man if no better option
+        }
+    }
+    
     }
 
     if (path.length > 1) {
       const nextCell = path[1];
-
-      // Check if the next cell is not occupied by another enemy
       const isCellOccupied = enemies.some(otherEnemy =>
         otherEnemy.x === nextCell.x && otherEnemy.y === nextCell.y
       );
 
       if (!isCellOccupied) {
-        // Update enemy direction based on movement
         if (nextCell.x > enemy.x) {
           enemy.direction = 'right';
         } else if (nextCell.x < enemy.x) {
@@ -471,6 +492,7 @@ function moveEnemies() {
 
   drawGrid();
 }
+
 
 function fleePath(start, threat) {
   const possiblePaths = getNeighbors(start);

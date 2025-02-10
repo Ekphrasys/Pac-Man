@@ -3,7 +3,7 @@ const pauseMenu = document.getElementById("pause-menu");
 const continueButton = document.getElementById("continue-button");
 const resetButton = document.getElementById("reset-button");
 let backgroundMusic;
-let moveSound;
+let moveSound = new Audio("./audio/PacmanWakaWaka04.mp3");
 let pacmanDeath;
 
 function generateMaze(size) {
@@ -366,7 +366,7 @@ function updateScore(points) {
 
 // Function to check if all dots are eaten
 function allDotsEaten() {
-  return grid.every(row => row.every(cell => cell !== 2)); // Check if there are no dots left
+  return grid.every(row => row.every(cell => cell !== 2 && cell !==3)); // Check if there are no dots left
 }
 
 
@@ -384,6 +384,7 @@ function movePacman() {
   const currentTime = Date.now();
   if (currentTime - lastMoveTime < moveDelay) return; // Enforce movement delay
   lastMoveTime = currentTime;
+  moveSound.pause()
 
   const newX = pacman.x + pacmanDirection.dx;
   const newY = pacman.y + pacmanDirection.dy;
@@ -396,14 +397,15 @@ function movePacman() {
     // Eat dot and update score
     if (grid[newY][newX] === 2) {
       grid[newY][newX] = 0; // Mark dot as eaten
+      moveSound.play()
       updateScore(10); // Each dot gives 10 points
     } else if (grid[newY][newX] === 3) {
       grid[newY][newX] = 0; // Mark power-up as eaten
+      moveSound.play()
       updateScore(50); // Power-up gives 50 points
       // Make pacman invulnerable
       isInvincible = true;
       invulnerabilityEndTime = Date.now() + 5000; // 5 seconds from now
-
     }
 
     // Check if all dots are eaten and start new level
@@ -540,6 +542,7 @@ function pauseGame() {
 
   if (isPaused) {
     backgroundMusic.pause(); // Pause music
+    moveSound.pause()
     isTimerPaused = true; // Pause the timer
     clearInterval(timerInterval); // Stop the timer
   } else {
@@ -628,6 +631,7 @@ function resetGame() {
   pacmanDirection = { dx: 0, dy: 0 };
   drawGrid();
   isPaused = false;
+  moveSound.pause()
 
   // Reset lives
   lives = 3;

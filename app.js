@@ -412,6 +412,7 @@ function movePacman() {
 
     // Check if all dots are eaten and start new level
     if (allDotsEaten()) {
+      moveSound.pause()
       alert("All dots are eaten! Generating new map.");
       nextLevel();
     }

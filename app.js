@@ -398,10 +398,12 @@ function movePacman() {
     if (grid[newY][newX] === 2) {
       grid[newY][newX] = 0; // Mark dot as eaten
       moveSound.play()
+      moveSound.volume =0.2
       updateScore(10); // Each dot gives 10 points
     } else if (grid[newY][newX] === 3) {
       grid[newY][newX] = 0; // Mark power-up as eaten
       moveSound.play()
+      moveSound.volume =0.2
       updateScore(50); // Power-up gives 50 points
       // Make pacman invulnerable
       isInvincible = true;

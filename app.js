@@ -191,14 +191,12 @@ const frameDelay = 100;
 
 function drawPacMan(cell) {
   if (isInvulnerable) {
-    // Flash Pac-Man by toggling visibility every 200ms
-    const flashInterval = 200;
+    // Flash Pac-Man by toggling visibility every 100ms
+    const flashInterval = 100;
     const isVisible = Math.floor(Date.now() / flashInterval) % 2 === 0;
-    if (isVisible) {
-      cell.classList.add("pacman");
-    }
+    cell.style.opacity = isVisible ? 1 : 0;
   } else {
-    cell.classList.add("pacman");
+    cell.style.opacity = 1;
   }
 
   // Remove any existing direction classes
@@ -225,6 +223,8 @@ function drawPacMan(cell) {
     cell.classList.add(`pacman-left-${pacmanFrame}`);
   } else if (pacmanDirection.dx === 1) {
     cell.classList.add(`pacman-right-${pacmanFrame}`);
+  } else if (pacmanDirection.dx === 0 && pacmanDirection.dy === 0) {
+    cell.classList.add("pacman"); // Default when not moving
   }
 }
 

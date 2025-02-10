@@ -132,50 +132,62 @@ body {
   
   .pacman-right-1 {
     background-image: url('./img/pacman/pacman_1_right.png');
+    background-size: cover;
   }
   
   .pacman-right-2 {
     background-image: url('./img/pacman/pacman_2_right.png');
+    background-size: cover;
   }
   
   .pacman-right-3 {
     background-image: url('./img/pacman/pacman_whole.png');
+    background-size: cover;
   }
   
   .pacman-left-1 {
     background-image: url('./img/pacman/pacman_1_left.png');
+    background-size: cover;
   }
   
   .pacman-left-2 {
     background-image: url('./img/pacman/pacman_2_left.png');
+    background-size: cover;
   }
   
   .pacman-left-3 {
     background-image: url('./img/pacman/pacman_whole.png');
+    background-size: cover;
   }
   
   .pacman-up-1 {
     background-image: url('./img/pacman/pacman_1_top.png');
+    background-size: cover;
   }
   
   .pacman-up-2 {
     background-image: url('./img/pacman/pacman_2_top.png');
+    background-size: cover;
   }
   
   .pacman-up-3 {
     background-image: url('./img/pacman/pacman_whole.png');
+    background-size: cover;
   }
   
   .pacman-down-1 {
     background-image: url('./img/pacman/pacman_1_bottom.png');
+    background-size: cover;
   }
   
   .pacman-down-2 {
     background-image: url('./img/pacman/pacman_2_bottom.png');
+    background-size: cover;
   }
   
   .pacman-down-3 {
     background-image: url('./img/pacman/pacman_whole.png');
+    background-size: cover;
   }
 
   .enemy-red {

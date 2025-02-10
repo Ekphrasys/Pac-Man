@@ -334,13 +334,13 @@ function drawGrid() {
             } else {
               // Pink enemy
               if (enemy.direction === 'up') {
-                cell.classList.add("enemy-orange-top");
+                cell.classList.add("enemy-pink-top");
               } else if (enemy.direction === 'down') {
-                cell.classList.add("enemy-orange-bottom");
+                cell.classList.add("enemy-pink-bottom");
               } else if (enemy.direction === 'left') {
-                cell.classList.add("enemy-orange-left");
+                cell.classList.add("enemy-pink-left");
               } else if (enemy.direction === 'right') {
-                cell.classList.add("enemy-orange-right");
+                cell.classList.add("enemy-pink-right");
               }
             }
           }
@@ -402,12 +402,12 @@ function movePacman() {
     if (grid[newY][newX] === 2) {
       grid[newY][newX] = 0; // Mark dot as eaten
       moveSound.play()
-      moveSound.volume =0.2
+      moveSound.volume =0.1
       updateScore(10); // Each dot gives 10 points
     } else if (grid[newY][newX] === 3) {
       grid[newY][newX] = 0; // Mark power-up as eaten
       moveSound.play()
-      moveSound.volume =0.2
+      moveSound.volume =0.1
       updateScore(50); // Power-up gives 50 points
       // Make pacman invulnerable
       isInvincible = true;

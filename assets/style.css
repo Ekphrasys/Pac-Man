@@ -215,27 +215,27 @@ body {
     background-size: cover;
   }
   
-  .enemy-orange {
+  .enemy-pink {
     background-image: url('./img/enemies/pink_left.png');
     background-size: cover;
   }
 
-  .enemy-orange-top {
+  .enemy-pink-top {
     background-image: url('./img/enemies/pink_top.png');
     background-size: cover;
   }
 
-  .enemy-orange-left {
+  .enemy-pink-left {
     background-image: url('./img/enemies/pink_left.png');
     background-size: cover;
   }
 
-  .enemy-orange-right {
+  .enemy-pink-right {
     background-image: url('./img/enemies/pink_right.png');
     background-size: cover;
   }
 
-  .enemy-orange-bottom {
+  .enemy-pink-bottom {
     background-image: url('./img/enemies/pink_bottom.png');
     background-size: cover;
   }

@@ -376,7 +376,6 @@ function nextLevel() {
   pacman.x = 1
   pacman.y = 1
   initializeEnemies()
-  startGameTimer()
 }
 
 // Function to move Pacman

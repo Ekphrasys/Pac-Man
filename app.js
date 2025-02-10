@@ -450,7 +450,7 @@ function moveEnemies() {
         let pacmanPath = findPath(enemy, pacman); // Path toward Pac-Man
         let possibleMoves = getNeighbors(enemy); // Get available movement options
     
-        if (nearestRed && heuristic(enemy, nearestRed) < 4) { // Only avoid if a red enemy is very close
+        if (nearestRed && heuristic(enemy, nearestRed) < 3) { // Only avoid if a red enemy is very close
             possibleMoves = possibleMoves.filter(move => heuristic(move, nearestRed) > heuristic(enemy, nearestRed));
         }
     

@@ -484,7 +484,7 @@ function moveEnemies() {
       path = fleePath(enemy, pacman);
     } else {
       if (index % 4 === 0) {
-        // Red enemies chase Pac-Man
+        // Red enemies chase Pac-Man 
         path = findPath(enemy, pacman);
       } else  if (index % 4 === 1){
         // Pink enemies still chase Pac-Man, but avoid red enemies when possible
@@ -536,19 +536,25 @@ function moveEnemies() {
         otherEnemy.x === nextCell.x && otherEnemy.y === nextCell.y
       );
 
-      if (!isCellOccupied) {
-        if (nextCell.x > enemy.x) {
+      let alternativeMoves = getNeighbors(enemy).filter(move => 
+        !enemies.some(e => e.x === move.x && e.y === move.y)
+      );
+      
+      if (!isCellOccupied || alternativeMoves.length > 0) {
+        let nextMove = !isCellOccupied ? nextCell : alternativeMoves.sort((a, b) => heuristic(a, pacman) - heuristic(b, pacman))[0];
+      
+        if (nextMove.x > enemy.x) {
           enemy.direction = 'right';
-        } else if (nextCell.x < enemy.x) {
+        } else if (nextMove.x < enemy.x) {
           enemy.direction = 'left';
-        } else if (nextCell.y > enemy.y) {
+        } else if (nextMove.y > enemy.y) {
           enemy.direction = 'down';
-        } else if (nextCell.y < enemy.y) {
+        } else if (nextMove.y < enemy.y) {
           enemy.direction = 'up';
         }
-
-        enemy.x = nextCell.x;
-        enemy.y = nextCell.y;
+      
+        enemy.x = nextMove.x;
+        enemy.y = nextMove.y;
       }
     }
   });

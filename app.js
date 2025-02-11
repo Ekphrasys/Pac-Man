@@ -512,9 +512,22 @@ function moveEnemies() {
       path = orangeEnemyMode === "flee" ? fleePath(enemy, pacman) : findPath(enemy, pacman); // Orange switches modes
     }else if (index % 4 === 3){
       let closestPowerUp = findClosestPowerUp(pacman);
-      path = closestPowerUp ? findPath(enemy, closestPowerUp) : findPath(enemy, pacman); // Green goes to power-up or Pac-Man
-    }
-    
+        
+        if (closestPowerUp) {
+          if (enemy.x === closestPowerUp.x && enemy.y === closestPowerUp.y) {
+            // If already on the power-up, move around it
+            let surroundingCells = getNeighbors(enemy).filter(cell => 
+              heuristic(cell, closestPowerUp) <= 2 // Stay close to power-up
+            );
+            path = surroundingCells.length > 0 ? [enemy, surroundingCells[Math.floor(Math.random() * surroundingCells.length)]] : [enemy];
+          } else {
+            // Move toward the power-up
+            path = findPath(enemy, closestPowerUp);
+          }
+        } else {
+          path = findPath(enemy, pacman); // No power-ups left, chase Pac-Man
+        }
+      }
     }
 
     if (path.length > 1) {

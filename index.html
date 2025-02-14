@@ -12,6 +12,7 @@
     <div id="main-menu" class="hidden">
         <h1>Pac-Man Game</h1>
         <button id="play-button">Play Game</button>
+        <button id="scoreboard-button">Scoreboard</button>
     </div>
     <div id="scoreboard" class="hidden">Score: 0</div>
     <div class="grid" id="grid" class="hidden"></div>
@@ -26,6 +27,22 @@
         <button id="reset-button">Reset Game</button>
     </div>
 
+    <!-- Scoreboard Display -->
+    <div id="scoreboard-container" class="hidden">
+        <h2>Leaderboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Name</th>
+                    <th>Score</th>
+                    <th>Time</th>
+                </tr>
+            </thead>
+            <tbody id="scores"></tbody>
+        </table>
+    </div>
+    <script src="./api/scoreboard.js"></script>
     <script src="app.js"></script>
 </body>
 
